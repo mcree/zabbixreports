@@ -1,0 +1,7 @@
+{
+    "directories": ["src", "vendor"],
+    "blacklist": [""],
+    "stub": true,
+    "main": "app/console",
+    "output": "zabbixreports.phar"
+}
