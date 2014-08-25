@@ -1,0 +1,4 @@
+zabbix_reports_main:
+    resource: "@ZabbixReportsMainBundle/Resources/config/routing.yml"
+    prefix:   /
+

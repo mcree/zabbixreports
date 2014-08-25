@@ -1,0 +1,3 @@
+zabbix_reports_main_homepage:
+    pattern:  /hello/{name}
+    defaults: { _controller: ZabbixReportsMainBundle:Default:index }
