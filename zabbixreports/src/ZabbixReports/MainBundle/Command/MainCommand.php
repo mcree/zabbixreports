@@ -9,15 +9,26 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\TwigBundle;
+use TFox\MpdfPortBundle\Service\MpdfService;
+use Symfony\Bundle\TwigBundle\TwigEngine;
+use Symfony\Bundle\TwigBundle\Loader\FilesystemLoader;
 
 class MainCommand extends ContainerAwareCommand {
+
+	/* (non-PHPdoc)
+	 * @see \Symfony\Component\Console\Command\Command::configure()
+	 */
 	protected function configure() {
 		$this->setName ( 'zabbixreports:main' )
 		->setDescription ( 'Generate PDF Zabbix report based on template' )
-		->addOption ( 'in', 'i', InputOption::VALUE_REQUIRED, 'Input TWIG template filename' )
+		->addOption ( 'template', 't', InputOption::VALUE_REQUIRED, 'Report template' )
 		->addOption ( 'out', 'o', InputOption::VALUE_REQUIRED, 'Output PDF filename' )
 		->addOption ( 'param', 'p', InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY, 'Parameter passed to TWIG template in "key:value" format', array () );
 	}
+
+	/* (non-PHPdoc)
+	 * @see \Symfony\Component\Console\Command\Command::execute()
+	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$input->validate ();
 		
@@ -40,12 +51,23 @@ class MainCommand extends ContainerAwareCommand {
 			}
 		}
 		
-		/* @var $mpdfService TFox\MpdfPortBundle\Service\MpdfService */
+		/* @var $mpdfService MpdfService */
 		$mpdfService = $this->getContainer ()->get ( 'tfox.mpdfport' );
 		
 		/* @var $engine TwigEngine */
 		$engine = $this->getContainer ()->get ( 'templating' );
-		$html = $engine->render ( $input->getOption ( "in" ), $vars );
+
+		$templatedir = dirname($this->getContainer()->get('kernel')->getRootdir()).DIRECTORY_SEPARATOR."templates";
+		$logger->debug("templatedir: $templatedir");
+		
+		/* @var $loader FilesystemLoader */
+		$loader = $this->getContainer()->get('twig.loader');
+		$loader->setPaths($templatedir);
+		//$this->container->get('twig.loader')->addPath('../../../../web/templates/', $namespace = '__main__');
+
+		$template = $input->getOption ( "template" );
+		$vars["BASE"]=$templatedir.DIRECTORY_SEPARATOR.$template;
+		$html = $engine->render ( $template."/report.html.twig", $vars );		
 		
 		$mpdfopts = array (
 				'constructorArgs' => array (), // Constructor arguments. Numeric array. Don't forget about points 2 and 3 in Warning section!
@@ -55,8 +77,10 @@ class MainCommand extends ContainerAwareCommand {
 				'outputFilename' => $input->getOption ( 'out' ), // $filename argument for Output method
 				'outputDest' => 'F'  // $dest argument for Output method
 				);
-		
+				
 		$logger->debug ( "HTML Template: $html" );
+		
+		chdir("/home/mcree/git/zabbixreports-github/zabbixreports/app/Resources/views/report1");
 		
 		$pdf = $mpdfService->generatePdf ( $html, $mpdfopts );
 		
