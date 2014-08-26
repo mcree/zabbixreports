@@ -14,6 +14,6 @@ parameters:
     locale:            en
     secret:            ThisTokenIsNotSoSecretChangeIt
 
-    zbx_url: https://example.tld/zabbix/api_jsonrpc.php
+    zbx_url: https://example.tld/zabbix
     zbx_username: zabbixuser
     zbx_password: topsecret

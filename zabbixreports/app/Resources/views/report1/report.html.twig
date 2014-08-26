@@ -1,18 +1,10 @@
-Zabbix Version: {{ zabbix_apiinfo_version({}) }}
+<html>
+<head><title>Zabbix IT Service Availability Report</title></head>
+<body>
+<h1>Zabbix IT Service Availability Report</h1>
 
-<table border=1>
-	<tr>
-		<th>Service ID</th>
-		<th>Service Name</th>
-	</tr>
-	{% for service in zabbix_service_get({ output:'extend',
-	selectDependencies: "extend" }) %}
-	<tr>
-		<td>{{ service.serviceid }}</td>
-		<td>{{ service.name }}</td>
-	</tr>
-	{% endfor %}
-</table>
+<p>Report period: {{ FROM|date("Y-m-d H:i:s") }} - {{ TO|date("Y-m-d H:i:s") }}</p>
+<p>Zabbix Version: {{ zabbix_apiinfo_version({}) }}</p>
 
 <table border=1>
 	<tr>
@@ -30,12 +22,17 @@ Zabbix Version: {{ zabbix_apiinfo_version({}) }}
 	{% set slaa = attribute(sla,service.serviceid).sla %}			
 	<tr>
 		<td>{{ service.name }}</td>
-		<td>{{ attribute(slaa,"0").from|date("Y-m-d H:m:s") }}</td>
-		<td>{{ attribute(slaa,"0").to|date("Y-m-d H:m:s") }}</td>
+		<td>{{ attribute(slaa,"0").from|date("Y-m-d H:i:s") }}</td>
+		<td>{{ attribute(slaa,"0").to|date("Y-m-d H:i:s") }}</td>
 		<td>{{ "%0.4f"|format(attribute(slaa,"0").sla) }}%</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").okTime)|date("%a %H:%I:%S") }}</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").problemTime)|date("%a %H:%I:%S") }}</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").downtimeTime)|date("%a %H:%I:%S") }}</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").okTime)|date("%a d %H:%I:%S") }}</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").problemTime)|date("%a d %H:%I:%S") }}</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").downtimeTime)|date("%a d %H:%I:%S") }}</td>
 	</tr>
 	{% endfor %}
 </table>
+
+<pagefooter content-center="{PAGENO}" line="1" />
+<setpagefooter />
+</body>
+</html>

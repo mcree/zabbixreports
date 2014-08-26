@@ -161,7 +161,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  ZabbixApiAbstract
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function setDefaultParams($defaultParams)
@@ -170,7 +170,7 @@ abstract class ZabbixApiAbstract
         if(is_array($defaultParams))
             $this->defaultParams = $defaultParams;
         else
-            throw new Exception('The argument defaultParams on setDefaultParams() has to be an array.');
+            throw new \Exception('The argument defaultParams on setDefaultParams() has to be an array.');
 
         return $this;
     }
@@ -235,7 +235,7 @@ abstract class ZabbixApiAbstract
         // get file handler
         $fileHandler = fopen($this->getApiUrl(), 'rb', false, $streamContext);
         if(!$fileHandler)
-            throw new Exception('Could not connect to "'.$this->getApiUrl().'"');
+            throw new \Exception('Could not connect to "'.$this->getApiUrl().'"');
 
         // get response
         $this->response = @stream_get_contents($fileHandler);
@@ -246,14 +246,14 @@ abstract class ZabbixApiAbstract
 
         // response verification
         if($this->response === FALSE)
-            throw new Exception('Could not read data from "'.$this->getApiUrl().'"');
+            throw new \Exception('Could not read data from "'.$this->getApiUrl().'"');
 
         // decode response
         $this->responseDecoded = json_decode($this->response);
 
         // validate response
         if(array_key_exists('error', $this->responseDecoded))
-            throw new Exception('API error '.$this->responseDecoded->error->code.': '.$this->responseDecoded->error->data);
+            throw new \Exception('API error '.$this->responseDecoded->error->code.': '.$this->responseDecoded->error->data);
 
         // return response
         if($resultArrayKey && is_array($this->responseDecoded->result))
@@ -322,7 +322,7 @@ abstract class ZabbixApiAbstract
      *
      * Afterwards the array will be merged with all default params, while the
      * default params have a lower priority (passed array will overwrite default
-     * params). But there is an exception for merging: If the passed array is an
+     * params). But there is an \Exception for merging: If the passed array is an
      * indexed array, the default params will not be merged. This is because
      * there are some API methods, which are expecting a simple JSON array (aka
      * PHP indexed array) instead of an object (aka PHP associative array).
@@ -372,7 +372,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     final public function userLogin($params=array(), $arrayKeyProperty='')
@@ -401,7 +401,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     final public function userLogout($params=array(), $arrayKeyProperty='')
@@ -430,7 +430,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionGet($params=array(), $arrayKeyProperty='')
@@ -460,7 +460,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionExists($params=array(), $arrayKeyProperty='')
@@ -490,7 +490,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionCreate($params=array(), $arrayKeyProperty='')
@@ -520,7 +520,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionUpdate($params=array(), $arrayKeyProperty='')
@@ -550,7 +550,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionDelete($params=array(), $arrayKeyProperty='')
@@ -580,7 +580,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionValidateOperations($params=array(), $arrayKeyProperty='')
@@ -610,7 +610,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionValidateConditions($params=array(), $arrayKeyProperty='')
@@ -640,7 +640,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function actionValidateOperationConditions($params=array(), $arrayKeyProperty='')
@@ -670,7 +670,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function alertGet($params=array(), $arrayKeyProperty='')
@@ -700,7 +700,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function apiinfoVersion($params=array(), $arrayKeyProperty='')
@@ -730,7 +730,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationGet($params=array(), $arrayKeyProperty='')
@@ -760,7 +760,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationExists($params=array(), $arrayKeyProperty='')
@@ -790,7 +790,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationCheckInput($params=array(), $arrayKeyProperty='')
@@ -820,7 +820,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationCreate($params=array(), $arrayKeyProperty='')
@@ -850,7 +850,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationUpdate($params=array(), $arrayKeyProperty='')
@@ -880,7 +880,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationDelete($params=array(), $arrayKeyProperty='')
@@ -910,7 +910,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationMassAdd($params=array(), $arrayKeyProperty='')
@@ -940,7 +940,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function applicationSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -970,7 +970,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function configurationExport($params=array(), $arrayKeyProperty='')
@@ -1000,7 +1000,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function configurationImport($params=array(), $arrayKeyProperty='')
@@ -1030,7 +1030,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dcheckGet($params=array(), $arrayKeyProperty='')
@@ -1060,7 +1060,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dcheckIsReadable($params=array(), $arrayKeyProperty='')
@@ -1090,7 +1090,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dcheckIsWritable($params=array(), $arrayKeyProperty='')
@@ -1120,7 +1120,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dhostGet($params=array(), $arrayKeyProperty='')
@@ -1150,7 +1150,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dhostExists($params=array(), $arrayKeyProperty='')
@@ -1180,7 +1180,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dhostCreate($params=array(), $arrayKeyProperty='')
@@ -1210,7 +1210,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dhostUpdate($params=array(), $arrayKeyProperty='')
@@ -1240,7 +1240,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dhostDelete($params=array(), $arrayKeyProperty='')
@@ -1270,7 +1270,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleGet($params=array(), $arrayKeyProperty='')
@@ -1300,7 +1300,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleExists($params=array(), $arrayKeyProperty='')
@@ -1330,7 +1330,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleCreate($params=array(), $arrayKeyProperty='')
@@ -1360,7 +1360,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleUpdate($params=array(), $arrayKeyProperty='')
@@ -1390,7 +1390,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleDelete($params=array(), $arrayKeyProperty='')
@@ -1420,7 +1420,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleCopy($params=array(), $arrayKeyProperty='')
@@ -1450,7 +1450,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -1480,7 +1480,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleIsReadable($params=array(), $arrayKeyProperty='')
@@ -1510,7 +1510,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleIsWritable($params=array(), $arrayKeyProperty='')
@@ -1540,7 +1540,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function discoveryruleFindInterfaceForItem($params=array(), $arrayKeyProperty='')
@@ -1570,7 +1570,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleGet($params=array(), $arrayKeyProperty='')
@@ -1600,7 +1600,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleExists($params=array(), $arrayKeyProperty='')
@@ -1630,7 +1630,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleCheckInput($params=array(), $arrayKeyProperty='')
@@ -1660,7 +1660,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleCreate($params=array(), $arrayKeyProperty='')
@@ -1690,7 +1690,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleUpdate($params=array(), $arrayKeyProperty='')
@@ -1720,7 +1720,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleDelete($params=array(), $arrayKeyProperty='')
@@ -1750,7 +1750,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleIsReadable($params=array(), $arrayKeyProperty='')
@@ -1780,7 +1780,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function druleIsWritable($params=array(), $arrayKeyProperty='')
@@ -1810,7 +1810,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dserviceGet($params=array(), $arrayKeyProperty='')
@@ -1840,7 +1840,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dserviceExists($params=array(), $arrayKeyProperty='')
@@ -1870,7 +1870,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dserviceCreate($params=array(), $arrayKeyProperty='')
@@ -1900,7 +1900,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dserviceUpdate($params=array(), $arrayKeyProperty='')
@@ -1930,7 +1930,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function dserviceDelete($params=array(), $arrayKeyProperty='')
@@ -1960,7 +1960,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function eventGet($params=array(), $arrayKeyProperty='')
@@ -1990,7 +1990,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function eventAcknowledge($params=array(), $arrayKeyProperty='')
@@ -2020,7 +2020,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphGet($params=array(), $arrayKeyProperty='')
@@ -2050,7 +2050,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -2080,7 +2080,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphDelete($params=array(), $arrayKeyProperty='')
@@ -2110,7 +2110,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphUpdate($params=array(), $arrayKeyProperty='')
@@ -2140,7 +2140,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphCreate($params=array(), $arrayKeyProperty='')
@@ -2170,7 +2170,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphExists($params=array(), $arrayKeyProperty='')
@@ -2200,7 +2200,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphGetObjects($params=array(), $arrayKeyProperty='')
@@ -2230,7 +2230,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphitemGet($params=array(), $arrayKeyProperty='')
@@ -2260,7 +2260,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphitemGetObjects($params=array(), $arrayKeyProperty='')
@@ -2290,7 +2290,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeGet($params=array(), $arrayKeyProperty='')
@@ -2320,7 +2320,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -2350,7 +2350,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeDelete($params=array(), $arrayKeyProperty='')
@@ -2380,7 +2380,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeUpdate($params=array(), $arrayKeyProperty='')
@@ -2410,7 +2410,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeCreate($params=array(), $arrayKeyProperty='')
@@ -2440,7 +2440,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeExists($params=array(), $arrayKeyProperty='')
@@ -2470,7 +2470,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function graphprototypeGetObjects($params=array(), $arrayKeyProperty='')
@@ -2500,7 +2500,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostGet($params=array(), $arrayKeyProperty='')
@@ -2530,7 +2530,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostGetObjects($params=array(), $arrayKeyProperty='')
@@ -2560,7 +2560,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostExists($params=array(), $arrayKeyProperty='')
@@ -2590,7 +2590,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostCreate($params=array(), $arrayKeyProperty='')
@@ -2620,7 +2620,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostUpdate($params=array(), $arrayKeyProperty='')
@@ -2650,7 +2650,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostMassAdd($params=array(), $arrayKeyProperty='')
@@ -2680,7 +2680,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostMassUpdate($params=array(), $arrayKeyProperty='')
@@ -2710,7 +2710,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostMassRemove($params=array(), $arrayKeyProperty='')
@@ -2740,7 +2740,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostDelete($params=array(), $arrayKeyProperty='')
@@ -2770,7 +2770,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostIsReadable($params=array(), $arrayKeyProperty='')
@@ -2800,7 +2800,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostIsWritable($params=array(), $arrayKeyProperty='')
@@ -2830,7 +2830,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupGet($params=array(), $arrayKeyProperty='')
@@ -2860,7 +2860,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupGetObjects($params=array(), $arrayKeyProperty='')
@@ -2890,7 +2890,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupExists($params=array(), $arrayKeyProperty='')
@@ -2920,7 +2920,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupCreate($params=array(), $arrayKeyProperty='')
@@ -2950,7 +2950,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupUpdate($params=array(), $arrayKeyProperty='')
@@ -2980,7 +2980,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupDelete($params=array(), $arrayKeyProperty='')
@@ -3010,7 +3010,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupMassAdd($params=array(), $arrayKeyProperty='')
@@ -3040,7 +3040,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupMassRemove($params=array(), $arrayKeyProperty='')
@@ -3070,7 +3070,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupMassUpdate($params=array(), $arrayKeyProperty='')
@@ -3100,7 +3100,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupIsReadable($params=array(), $arrayKeyProperty='')
@@ -3130,7 +3130,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostgroupIsWritable($params=array(), $arrayKeyProperty='')
@@ -3160,7 +3160,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function historyGet($params=array(), $arrayKeyProperty='')
@@ -3190,7 +3190,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function historyCreate($params=array(), $arrayKeyProperty='')
@@ -3220,7 +3220,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function historyDelete($params=array(), $arrayKeyProperty='')
@@ -3250,7 +3250,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceGet($params=array(), $arrayKeyProperty='')
@@ -3280,7 +3280,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceExists($params=array(), $arrayKeyProperty='')
@@ -3310,7 +3310,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceCheckInput($params=array(), $arrayKeyProperty='')
@@ -3340,7 +3340,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceCreate($params=array(), $arrayKeyProperty='')
@@ -3370,7 +3370,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceUpdate($params=array(), $arrayKeyProperty='')
@@ -3400,7 +3400,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceDelete($params=array(), $arrayKeyProperty='')
@@ -3430,7 +3430,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceMassAdd($params=array(), $arrayKeyProperty='')
@@ -3460,7 +3460,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceMassRemove($params=array(), $arrayKeyProperty='')
@@ -3490,7 +3490,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function hostinterfaceReplaceHostInterfaces($params=array(), $arrayKeyProperty='')
@@ -3520,7 +3520,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageGet($params=array(), $arrayKeyProperty='')
@@ -3550,7 +3550,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageGetObjects($params=array(), $arrayKeyProperty='')
@@ -3580,7 +3580,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageExists($params=array(), $arrayKeyProperty='')
@@ -3610,7 +3610,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageCreate($params=array(), $arrayKeyProperty='')
@@ -3640,7 +3640,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageUpdate($params=array(), $arrayKeyProperty='')
@@ -3670,7 +3670,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function imageDelete($params=array(), $arrayKeyProperty='')
@@ -3700,7 +3700,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapGet($params=array(), $arrayKeyProperty='')
@@ -3730,7 +3730,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapCreate($params=array(), $arrayKeyProperty='')
@@ -3760,7 +3760,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapUpdate($params=array(), $arrayKeyProperty='')
@@ -3790,7 +3790,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapDelete($params=array(), $arrayKeyProperty='')
@@ -3820,7 +3820,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapIsReadable($params=array(), $arrayKeyProperty='')
@@ -3850,7 +3850,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function iconmapIsWritable($params=array(), $arrayKeyProperty='')
@@ -3880,7 +3880,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemGet($params=array(), $arrayKeyProperty='')
@@ -3910,7 +3910,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemGetObjects($params=array(), $arrayKeyProperty='')
@@ -3940,7 +3940,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemExists($params=array(), $arrayKeyProperty='')
@@ -3970,7 +3970,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemCreate($params=array(), $arrayKeyProperty='')
@@ -4000,7 +4000,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemUpdate($params=array(), $arrayKeyProperty='')
@@ -4030,7 +4030,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemDelete($params=array(), $arrayKeyProperty='')
@@ -4060,7 +4060,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -4090,7 +4090,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemValidateInventoryLinks($params=array(), $arrayKeyProperty='')
@@ -4120,7 +4120,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemAddRelatedObjects($params=array(), $arrayKeyProperty='')
@@ -4150,7 +4150,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemFindInterfaceForItem($params=array(), $arrayKeyProperty='')
@@ -4180,7 +4180,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemIsReadable($params=array(), $arrayKeyProperty='')
@@ -4210,7 +4210,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemIsWritable($params=array(), $arrayKeyProperty='')
@@ -4240,7 +4240,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeGet($params=array(), $arrayKeyProperty='')
@@ -4270,7 +4270,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeExists($params=array(), $arrayKeyProperty='')
@@ -4300,7 +4300,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeCreate($params=array(), $arrayKeyProperty='')
@@ -4330,7 +4330,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeUpdate($params=array(), $arrayKeyProperty='')
@@ -4360,7 +4360,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeDelete($params=array(), $arrayKeyProperty='')
@@ -4390,7 +4390,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -4420,7 +4420,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeFindInterfaceForItem($params=array(), $arrayKeyProperty='')
@@ -4450,7 +4450,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeIsReadable($params=array(), $arrayKeyProperty='')
@@ -4480,7 +4480,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function itemprototypeIsWritable($params=array(), $arrayKeyProperty='')
@@ -4510,7 +4510,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function maintenanceGet($params=array(), $arrayKeyProperty='')
@@ -4540,7 +4540,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function maintenanceExists($params=array(), $arrayKeyProperty='')
@@ -4570,7 +4570,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function maintenanceCreate($params=array(), $arrayKeyProperty='')
@@ -4600,7 +4600,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function maintenanceUpdate($params=array(), $arrayKeyProperty='')
@@ -4630,7 +4630,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function maintenanceDelete($params=array(), $arrayKeyProperty='')
@@ -4660,7 +4660,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapGet($params=array(), $arrayKeyProperty='')
@@ -4690,7 +4690,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapGetObjects($params=array(), $arrayKeyProperty='')
@@ -4720,7 +4720,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapExists($params=array(), $arrayKeyProperty='')
@@ -4750,7 +4750,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapCheckInput($params=array(), $arrayKeyProperty='')
@@ -4780,7 +4780,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapCreate($params=array(), $arrayKeyProperty='')
@@ -4810,7 +4810,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapUpdate($params=array(), $arrayKeyProperty='')
@@ -4840,7 +4840,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapDelete($params=array(), $arrayKeyProperty='')
@@ -4870,7 +4870,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapIsReadable($params=array(), $arrayKeyProperty='')
@@ -4900,7 +4900,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapIsWritable($params=array(), $arrayKeyProperty='')
@@ -4930,7 +4930,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mapCheckCircleSelementsLink($params=array(), $arrayKeyProperty='')
@@ -4960,7 +4960,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mediatypeGet($params=array(), $arrayKeyProperty='')
@@ -4990,7 +4990,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mediatypeCreate($params=array(), $arrayKeyProperty='')
@@ -5020,7 +5020,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mediatypeUpdate($params=array(), $arrayKeyProperty='')
@@ -5050,7 +5050,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function mediatypeDelete($params=array(), $arrayKeyProperty='')
@@ -5080,7 +5080,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyGet($params=array(), $arrayKeyProperty='')
@@ -5110,7 +5110,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyCreate($params=array(), $arrayKeyProperty='')
@@ -5140,7 +5140,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyUpdate($params=array(), $arrayKeyProperty='')
@@ -5170,7 +5170,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyDelete($params=array(), $arrayKeyProperty='')
@@ -5200,7 +5200,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyIsReadable($params=array(), $arrayKeyProperty='')
@@ -5230,7 +5230,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function proxyIsWritable($params=array(), $arrayKeyProperty='')
@@ -5260,7 +5260,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceGet($params=array(), $arrayKeyProperty='')
@@ -5290,7 +5290,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceCreate($params=array(), $arrayKeyProperty='')
@@ -5320,7 +5320,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceValidateUpdate($params=array(), $arrayKeyProperty='')
@@ -5350,7 +5350,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceUpdate($params=array(), $arrayKeyProperty='')
@@ -5380,7 +5380,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceValidateDelete($params=array(), $arrayKeyProperty='')
@@ -5410,7 +5410,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceDelete($params=array(), $arrayKeyProperty='')
@@ -5440,7 +5440,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceAddDependencies($params=array(), $arrayKeyProperty='')
@@ -5470,7 +5470,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceDeleteDependencies($params=array(), $arrayKeyProperty='')
@@ -5500,7 +5500,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceValidateAddTimes($params=array(), $arrayKeyProperty='')
@@ -5530,7 +5530,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceAddTimes($params=array(), $arrayKeyProperty='')
@@ -5560,7 +5560,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceGetSla($params=array(), $arrayKeyProperty='')
@@ -5590,7 +5590,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceDeleteTimes($params=array(), $arrayKeyProperty='')
@@ -5620,7 +5620,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceIsReadable($params=array(), $arrayKeyProperty='')
@@ -5650,7 +5650,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceIsWritable($params=array(), $arrayKeyProperty='')
@@ -5680,7 +5680,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function serviceExpandPeriodicalTimes($params=array(), $arrayKeyProperty='')
@@ -5710,7 +5710,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenGet($params=array(), $arrayKeyProperty='')
@@ -5740,7 +5740,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenExists($params=array(), $arrayKeyProperty='')
@@ -5770,7 +5770,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenCreate($params=array(), $arrayKeyProperty='')
@@ -5800,7 +5800,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenUpdate($params=array(), $arrayKeyProperty='')
@@ -5830,7 +5830,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenDelete($params=array(), $arrayKeyProperty='')
@@ -5860,7 +5860,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemGet($params=array(), $arrayKeyProperty='')
@@ -5890,7 +5890,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemCreate($params=array(), $arrayKeyProperty='')
@@ -5920,7 +5920,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemUpdate($params=array(), $arrayKeyProperty='')
@@ -5950,7 +5950,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemUpdateByPosition($params=array(), $arrayKeyProperty='')
@@ -5980,7 +5980,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemDelete($params=array(), $arrayKeyProperty='')
@@ -6010,7 +6010,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemIsReadable($params=array(), $arrayKeyProperty='')
@@ -6040,7 +6040,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function screenitemIsWritable($params=array(), $arrayKeyProperty='')
@@ -6070,7 +6070,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptGet($params=array(), $arrayKeyProperty='')
@@ -6100,7 +6100,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptGetObjects($params=array(), $arrayKeyProperty='')
@@ -6130,7 +6130,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptCreate($params=array(), $arrayKeyProperty='')
@@ -6160,7 +6160,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptUpdate($params=array(), $arrayKeyProperty='')
@@ -6190,7 +6190,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptDelete($params=array(), $arrayKeyProperty='')
@@ -6220,7 +6220,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptExecute($params=array(), $arrayKeyProperty='')
@@ -6250,7 +6250,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function scriptGetScriptsByHosts($params=array(), $arrayKeyProperty='')
@@ -6280,7 +6280,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatePkOption($params=array(), $arrayKeyProperty='')
@@ -6310,7 +6310,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateGet($params=array(), $arrayKeyProperty='')
@@ -6340,7 +6340,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateGetObjects($params=array(), $arrayKeyProperty='')
@@ -6370,7 +6370,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateExists($params=array(), $arrayKeyProperty='')
@@ -6400,7 +6400,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateCreate($params=array(), $arrayKeyProperty='')
@@ -6430,7 +6430,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateUpdate($params=array(), $arrayKeyProperty='')
@@ -6460,7 +6460,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateDelete($params=array(), $arrayKeyProperty='')
@@ -6490,7 +6490,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateMassAdd($params=array(), $arrayKeyProperty='')
@@ -6520,7 +6520,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateMassUpdate($params=array(), $arrayKeyProperty='')
@@ -6550,7 +6550,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateMassRemove($params=array(), $arrayKeyProperty='')
@@ -6580,7 +6580,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateIsReadable($params=array(), $arrayKeyProperty='')
@@ -6610,7 +6610,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templateIsWritable($params=array(), $arrayKeyProperty='')
@@ -6640,7 +6640,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenGet($params=array(), $arrayKeyProperty='')
@@ -6670,7 +6670,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenExists($params=array(), $arrayKeyProperty='')
@@ -6700,7 +6700,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenCreate($params=array(), $arrayKeyProperty='')
@@ -6730,7 +6730,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenUpdate($params=array(), $arrayKeyProperty='')
@@ -6760,7 +6760,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenDelete($params=array(), $arrayKeyProperty='')
@@ -6790,7 +6790,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenCopy($params=array(), $arrayKeyProperty='')
@@ -6820,7 +6820,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenIsReadable($params=array(), $arrayKeyProperty='')
@@ -6850,7 +6850,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenIsWritable($params=array(), $arrayKeyProperty='')
@@ -6880,7 +6880,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function templatescreenitemGet($params=array(), $arrayKeyProperty='')
@@ -6910,7 +6910,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerGet($params=array(), $arrayKeyProperty='')
@@ -6940,7 +6940,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerGetObjects($params=array(), $arrayKeyProperty='')
@@ -6970,7 +6970,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerExists($params=array(), $arrayKeyProperty='')
@@ -7000,7 +7000,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerCheckInput($params=array(), $arrayKeyProperty='')
@@ -7030,7 +7030,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerCreate($params=array(), $arrayKeyProperty='')
@@ -7060,7 +7060,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerUpdate($params=array(), $arrayKeyProperty='')
@@ -7090,7 +7090,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerDelete($params=array(), $arrayKeyProperty='')
@@ -7120,7 +7120,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerAddDependencies($params=array(), $arrayKeyProperty='')
@@ -7150,7 +7150,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerDeleteDependencies($params=array(), $arrayKeyProperty='')
@@ -7180,7 +7180,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -7210,7 +7210,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerSyncTemplateDependencies($params=array(), $arrayKeyProperty='')
@@ -7240,7 +7240,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerIsReadable($params=array(), $arrayKeyProperty='')
@@ -7270,7 +7270,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerIsWritable($params=array(), $arrayKeyProperty='')
@@ -7300,7 +7300,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerprototypeGet($params=array(), $arrayKeyProperty='')
@@ -7330,7 +7330,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerprototypeCreate($params=array(), $arrayKeyProperty='')
@@ -7360,7 +7360,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerprototypeUpdate($params=array(), $arrayKeyProperty='')
@@ -7390,7 +7390,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerprototypeDelete($params=array(), $arrayKeyProperty='')
@@ -7420,7 +7420,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function triggerprototypeSyncTemplates($params=array(), $arrayKeyProperty='')
@@ -7450,7 +7450,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userGet($params=array(), $arrayKeyProperty='')
@@ -7480,7 +7480,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userCreate($params=array(), $arrayKeyProperty='')
@@ -7510,7 +7510,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userUpdate($params=array(), $arrayKeyProperty='')
@@ -7540,7 +7540,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userUpdateProfile($params=array(), $arrayKeyProperty='')
@@ -7570,7 +7570,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userDelete($params=array(), $arrayKeyProperty='')
@@ -7600,7 +7600,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userAddMedia($params=array(), $arrayKeyProperty='')
@@ -7630,7 +7630,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userDeleteMedia($params=array(), $arrayKeyProperty='')
@@ -7660,7 +7660,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userUpdateMedia($params=array(), $arrayKeyProperty='')
@@ -7690,7 +7690,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userCheckAuthentication($params=array(), $arrayKeyProperty='')
@@ -7720,7 +7720,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userIsReadable($params=array(), $arrayKeyProperty='')
@@ -7750,7 +7750,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function userIsWritable($params=array(), $arrayKeyProperty='')
@@ -7780,7 +7780,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupGet($params=array(), $arrayKeyProperty='')
@@ -7810,7 +7810,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupGetObjects($params=array(), $arrayKeyProperty='')
@@ -7840,7 +7840,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupExists($params=array(), $arrayKeyProperty='')
@@ -7870,7 +7870,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupCreate($params=array(), $arrayKeyProperty='')
@@ -7900,7 +7900,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupUpdate($params=array(), $arrayKeyProperty='')
@@ -7930,7 +7930,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupMassAdd($params=array(), $arrayKeyProperty='')
@@ -7960,7 +7960,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupMassUpdate($params=array(), $arrayKeyProperty='')
@@ -7990,7 +7990,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupMassRemove($params=array(), $arrayKeyProperty='')
@@ -8020,7 +8020,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupDelete($params=array(), $arrayKeyProperty='')
@@ -8050,7 +8050,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupIsReadable($params=array(), $arrayKeyProperty='')
@@ -8080,7 +8080,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usergroupIsWritable($params=array(), $arrayKeyProperty='')
@@ -8110,7 +8110,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroGet($params=array(), $arrayKeyProperty='')
@@ -8140,7 +8140,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroCreateGlobal($params=array(), $arrayKeyProperty='')
@@ -8170,7 +8170,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroUpdateGlobal($params=array(), $arrayKeyProperty='')
@@ -8200,7 +8200,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroDeleteGlobal($params=array(), $arrayKeyProperty='')
@@ -8230,7 +8230,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroCreate($params=array(), $arrayKeyProperty='')
@@ -8260,7 +8260,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroUpdate($params=array(), $arrayKeyProperty='')
@@ -8290,7 +8290,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroDelete($params=array(), $arrayKeyProperty='')
@@ -8320,7 +8320,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroGetMacros($params=array(), $arrayKeyProperty='')
@@ -8350,7 +8350,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroResolveTrigger($params=array(), $arrayKeyProperty='')
@@ -8380,7 +8380,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroResolveItem($params=array(), $arrayKeyProperty='')
@@ -8410,7 +8410,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermacroReplaceMacros($params=array(), $arrayKeyProperty='')
@@ -8440,7 +8440,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function usermediaGet($params=array(), $arrayKeyProperty='')
@@ -8470,7 +8470,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckGet($params=array(), $arrayKeyProperty='')
@@ -8500,7 +8500,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckCreate($params=array(), $arrayKeyProperty='')
@@ -8530,7 +8530,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckUpdate($params=array(), $arrayKeyProperty='')
@@ -8560,7 +8560,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckDelete($params=array(), $arrayKeyProperty='')
@@ -8590,7 +8590,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckIsReadable($params=array(), $arrayKeyProperty='')
@@ -8620,7 +8620,7 @@ abstract class ZabbixApiAbstract
      *
      * @retval  stdClass
      *
-     * @throws  Exception
+     * @throws  \Exception
      */
 
     public function webcheckIsWritable($params=array(), $arrayKeyProperty='')
