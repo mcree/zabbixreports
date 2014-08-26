@@ -5,3 +5,8 @@ services:
 #    zabbix_reports_main.example:
 #        class: %zabbix_reports_main.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+    zabbixreports.twig.zabbix_extension:
+        class: ZabbixReports\MainBundle\Twig\ZabbixExtension
+        arguments: ['@service_container', %zbx_url%, %zbx_username%, %zbx_password% ]
+        tags:
+          - { name: twig.extension }

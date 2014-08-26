@@ -21,6 +21,10 @@ monolog:
         chromephp:
             type:  chromephp
             level: info
+        console_alt:
+            type:  stream
+            path:  /dev/stderr
+            level: debug
 
 assetic:
     use_controller: true

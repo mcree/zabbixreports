@@ -5,28 +5,28 @@
 	<buildpathentry kind="src" path="vendor/sensio/generator-bundle"/>
 	<buildpathentry excluding="classes/" kind="src" path="vendor/mpdf/mpdf"/>
 	<buildpathentry kind="src" path="vendor/doctrine/inflector/lib"/>
-	<buildpathentry kind="src" path="vendor/symfony/symfony/src/Symfony/Component/Locale/Resources/stubs"/>
 	<buildpathentry kind="src" path="vendor/jms/cg/src"/>
 	<buildpathentry kind="src" path="vendor/kriswallsmith/assetic/src"/>
-	<buildpathentry kind="src" path="vendor/symfony/console"/>
 	<buildpathentry kind="src" path="vendor/doctrine/cache/lib"/>
 	<buildpathentry kind="src" path="vendor/sensio/distribution-bundle"/>
+	<buildpathentry kind="src" path="vendor/symfony/icu"/>
 	<buildpathentry kind="src" path="vendor/doctrine/annotations/lib"/>
 	<buildpathentry kind="src" path="vendor/doctrine/orm/lib"/>
 	<buildpathentry kind="src" path="vendor/mpdf/mpdf/classes"/>
 	<buildpathentry kind="src" path="vendor/sensio/framework-extra-bundle"/>
-	<buildpathentry kind="src" path="vendor/symfony/monolog-bundle"/>
 	<buildpathentry kind="src" path="vendor/doctrine/common/lib"/>
 	<buildpathentry kind="src" path="vendor/tfox/mpdf-port-bundle"/>
 	<buildpathentry kind="src" path="vendor/psr/log"/>
+	<buildpathentry kind="src" path="vendor/symfony/symfony/src/Symfony/Component/Intl/Resources/stubs"/>
+	<buildpathentry kind="src" path="vendor/incenteev/composer-parameter-handler"/>
 	<buildpathentry kind="src" path="vendor/symfony/assetic-bundle"/>
 	<buildpathentry kind="src" path="vendor/doctrine/lexer/lib"/>
 	<buildpathentry kind="src" path="vendor/symfony/symfony/src/Symfony/Component/HttpFoundation/Resources/stubs"/>
 	<buildpathentry kind="src" path="vendor/twig/twig/lib"/>
 	<buildpathentry kind="src" path="vendor/twig/extensions/lib"/>
 	<buildpathentry kind="src" path="vendor/doctrine/doctrine-bundle"/>
-	<buildpathentry kind="src" path="vendor/jdorn/sql-formatter/lib"/>
 	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+	<buildpathentry kind="src" path="vendor/jdorn/sql-formatter/lib"/>
 	<buildpathentry kind="src" path="vendor/jms/metadata/src"/>
 	<buildpathentry kind="src" path="vendor/doctrine/dbal/lib"/>
 	<buildpathentry kind="src" path="src"/>
@@ -35,7 +35,7 @@
 	<buildpathentry kind="src" path="vendor/symfony/swiftmailer-bundle"/>
 	<buildpathentry kind="src" path="vendor/phpoption/phpoption/src"/>
 	<buildpathentry kind="src" path="vendor/jms/security-extra-bundle"/>
-	<buildpathentry kind="src" path="vendor/jms/aop-bundle"/>
 	<buildpathentry kind="src" path="vendor/jms/di-extra-bundle"/>
-	<buildpathentry excluding="Symfony/Component/HttpFoundation/Resources/stubs/|Symfony/Component/Locale/Resources/stubs/" kind="src" path="vendor/symfony/symfony/src"/>
+	<buildpathentry kind="src" path="vendor/jms/aop-bundle"/>
+	<buildpathentry excluding="Symfony/Component/HttpFoundation/Resources/stubs/|Symfony/Component/Intl/Resources/stubs/" kind="src" path="vendor/symfony/symfony/src"/>
 </buildpath>

@@ -1,1 +1,41 @@
-Hello bello!
+Zabbix Version: {{ zabbix_apiinfo_version({}) }}
+
+<table border=1>
+	<tr>
+		<th>Service ID</th>
+		<th>Service Name</th>
+	</tr>
+	{% for service in zabbix_service_get({ output:'extend',
+	selectDependencies: "extend" }) %}
+	<tr>
+		<td>{{ service.serviceid }}</td>
+		<td>{{ service.name }}</td>
+	</tr>
+	{% endfor %}
+</table>
+
+<table border=1>
+	<tr>
+		<th>Service Name</th>
+		<th>From Date</th>
+		<th>To Date</th>
+		<th>SLA</th>
+		<th>OK Time</th>
+		<th>Problem Time</th>
+		<th>Down Time</th>
+	</tr>
+
+	{% for service in zabbix_service_get({ output:'extend' }) %}
+	{% set sla = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %}
+	{% set slaa = attribute(sla,service.serviceid).sla %}			
+	<tr>
+		<td>{{ service.name }}</td>
+		<td>{{ attribute(slaa,"0").from|date("Y-m-d H:m:s") }}</td>
+		<td>{{ attribute(slaa,"0").to|date("Y-m-d H:m:s") }}</td>
+		<td>{{ "%0.4f"|format(attribute(slaa,"0").sla) }}%</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").okTime)|date("%a %H:%I:%S") }}</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").problemTime)|date("%a %H:%I:%S") }}</td>
+		<td>{{ secs_to_dateinterval(attribute(slaa,"0").downtimeTime)|date("%a %H:%I:%S") }}</td>
+	</tr>
+	{% endfor %}
+</table>

@@ -6,12 +6,17 @@
 	</projects>
 	<buildSpec>
 		<buildCommand>
-			<name>com.dubture.doctrine.core.doctrineBuilder</name>
+			<name>com.dubture.symfony.core.symfonyBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
 		<buildCommand>
-			<name>com.dubture.symfony.core.symfonyBuilder</name>
+			<name>org.eclipse.dltk.core.scriptbuilder</name>
+			<arguments>
+			</arguments>
+		</buildCommand>
+		<buildCommand>
+			<name>com.dubture.doctrine.core.doctrineBuilder</name>
 			<arguments>
 			</arguments>
 		</buildCommand>
@@ -30,17 +35,12 @@
 			<arguments>
 			</arguments>
 		</buildCommand>
-		<buildCommand>
-			<name>org.eclipse.dltk.core.scriptbuilder</name>
-			<arguments>
-			</arguments>
-		</buildCommand>
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.php.core.PHPNature</nature>
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>com.dubture.composer.core.composerNature</nature>
-		<nature>com.dubture.symfony.core.symfonyNature</nature>
 		<nature>com.dubture.doctrine.core.doctrineNature</nature>
+		<nature>com.dubture.symfony.core.symfonyNature</nature>
 	</natures>
 </projectDescription>
