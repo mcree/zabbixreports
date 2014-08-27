@@ -80,8 +80,6 @@ class MainCommand extends ContainerAwareCommand {
 				
 		$logger->debug ( "HTML Template: $html" );
 		
-		chdir("/home/mcree/git/zabbixreports-github/zabbixreports/app/Resources/views/report1");
-		
 		$pdf = $mpdfService->generatePdf ( $html, $mpdfopts );
 		
 		$logger->info ( "Done." );

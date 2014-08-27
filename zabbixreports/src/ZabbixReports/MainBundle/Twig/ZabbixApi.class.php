@@ -32,9 +32,13 @@
 
 namespace ZabbixReports\MainBundle\Twig;
 
-class ZabbixApi extends ZabbixApiAbstract
+class ZabbixApi extends \ZabbixApiAbstract
 {
 
+	public function getAuth() {
+		return $this->auth;
+	}
+	
 }
 
 ?>

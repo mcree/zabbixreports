@@ -108,12 +108,19 @@ class ZabbixExtension extends \Twig_Extension {
 	 * @param number $period
 	 * @return mixed
 	 */
-	public function getGraphImageById($graphid, $period = 3600)
-	{		
-		global $arrSettings;
+	public function getGraphImageById($graphid, $period = 3600) {		
 		
 		/* @var $logger LoggerInterface */
 		$logger = $this->container->get ( 'logger' );
+		
+		/* @var $zbx ZabbixApi */
+		$zbx = $this->zbx;
+		
+		
+		return "";
+		
+		global $arrSettings;
+		
 		
 		
 		// Cookiename

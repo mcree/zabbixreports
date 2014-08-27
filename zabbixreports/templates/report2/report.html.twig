@@ -1,0 +1,15 @@
+<html>
+<head>
+	<title>Zabbix IT Service Availability Report</title>
+	<base href="{{ BASE }}" />
+	<link rel="stylesheet" type="text/css" href="report.css" />
+</head>
+<body>
+<h1>Zabbix IT Service Availability Report</h1>
+
+{{ zbx_graph("3789") }}
+
+<pagefooter content-center="{PAGENO}" line="1" />
+<setpagefooter />
+</body>
+</html>
