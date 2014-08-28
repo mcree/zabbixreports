@@ -3,11 +3,14 @@
 	<title>Zabbix IT Service Availability Report</title>
 	<base href="{{ BASE }}" />
 	<link rel="stylesheet" type="text/css" href="report.css" />
+	{% set PERIOD = TO|date("U") - FROM|date("U") %}
 </head>
 <body>
 <h1>Zabbix IT Service Availability Report</h1>
 
-{{ zbx_graph("3789") }}
+blah blah
+<div class="graph"><img src="{{ zabbix_graph({graphid:"3022", width:"500", height:"130", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
+blah
 
 <pagefooter content-center="{PAGENO}" line="1" />
 <setpagefooter />

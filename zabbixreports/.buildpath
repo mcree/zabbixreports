@@ -15,8 +15,8 @@
 	<buildpathentry kind="src" path="vendor/mpdf/mpdf/classes"/>
 	<buildpathentry kind="src" path="vendor/sensio/framework-extra-bundle"/>
 	<buildpathentry kind="src" path="vendor/doctrine/common/lib"/>
-	<buildpathentry kind="src" path="vendor/psr/log"/>
 	<buildpathentry kind="src" path="vendor/tfox/mpdf-port-bundle"/>
+	<buildpathentry kind="src" path="vendor/psr/log"/>
 	<buildpathentry kind="src" path="vendor/symfony/symfony/src/Symfony/Component/Intl/Resources/stubs"/>
 	<buildpathentry kind="src" path="vendor/incenteev/composer-parameter-handler"/>
 	<buildpathentry kind="src" path="vendor/symfony/assetic-bundle"/>

@@ -30,10 +30,34 @@
  * @brief   Concrete class for the Zabbix API.
  */
 
-namespace ZabbixReports\MainBundle\Twig;
-
-class ZabbixApi extends \ZabbixApiAbstract
+class ZabbixApi extends ZabbixApiAbstract
 {
+	
+	/**
+	 * @brief   Auth string.
+	 */
+	
+	private $auth = '';
+	
+	
+	/**
+	 * @brief   Class constructor.
+	 *
+	 * @param   $apiUrl     API url (e.g. http://FQDN/zabbix/api_jsonrpc.php)
+	 * @param   $user       Username.
+	 * @param   $password   Password.
+	 */
+	
+	public function __construct($apiUrl='', $user='', $password='')
+	{
+		if($apiUrl)
+			$this->setApiUrl($apiUrl);
+	
+		if($user && $password)
+			$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
+	}
+	
+	
 
 	public function getAuth() {
 		return $this->auth;
