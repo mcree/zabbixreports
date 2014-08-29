@@ -1,0 +1,109 @@
+<style>
+/**
+ * Default report CSS for ZabbixReports
+ *
+ * GPLv3 by Erno Rigo <erno@rigo.info>
+ */
+@page {
+	sheet-size: A4;	/* OR (but not both): size: 21cm 29.7cm portrait; */
+	margin-top: 2cm;
+	margin-left: 1.5cm;
+	margin-right: 1.5cm;
+	margin-bottom: 2cm;
+	margin-header: 1cm;
+	margin-footer: 1cm;
+	header: html_defaultReportHeader;
+	footer: html_defaultReportFooter;
+}
+
+body {
+	font-family: sans-serif;
+}
+
+.nobr {
+	page-break-inside: avoid;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	page-break-after: avoid;
+}
+
+.header {
+	border-bottom-style: solid;
+	border-bottom-color: black;
+	border-bottom-width: 1px;
+}
+
+.header-title {
+	text-align: left;
+	float: left;
+	vertical-align: bottom;
+	width: 50%;
+}
+
+.header-date {
+	text-align: right;
+	float: right;
+	vertical-align: bottom;
+	width: 50%;
+}
+
+
+.footer {
+	border-top-style: solid;
+	border-top-color: black;
+	border-top-width: 1px;
+}
+
+.footer-logo {
+	text-align: left;
+	float: left;
+	vertical-align: top;
+	width: 50%;
+}
+
+.footer-logo-img {
+	vertical-align: middle;
+	
+}
+
+.footer-pageno {
+	text-align: right;
+	float: right;
+	vertical-align: top;
+	width: 50%;
+}
+
+table {
+	border-collapse: separate;
+	border: solid 1px black;
+	empty-cells: show;
+}
+
+thead tr {
+	background: linear-gradient(#A3BCD4,#779DC0);
+}
+
+td, th {
+	white-space: nowrap;
+	font-size: 10pt;
+	font-weight: normal;
+}
+
+tr.odd td {
+	background: #F2F7FA;
+}
+
+tr.even {
+	background: #E1E7EC;
+}
+
+thead tr th, thead tr td {
+	color: white;
+	font-weight: bold;
+}
+
+.graph {
+	text-align: center;
+}
+</style>

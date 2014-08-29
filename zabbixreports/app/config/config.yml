@@ -23,7 +23,11 @@ framework:
 # Twig Configuration
 twig:
     debug:            %kernel.debug%
-    strict_variables: %kernel.debug%
+    strict_variables: %kernel.debug%    
+    globals:
+        timeformat:   'Y-m-d H:i:s'
+        intervalformat: '%%ad %%H:%%I:%%S'
+        
 
 # Assetic Configuration
 assetic:

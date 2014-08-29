@@ -1,0 +1,48 @@
+<div class="nobr">
+<h2>Details for service "{{ service.name }}"</h2>
+<div class="graph"><img src="{{ zabbix_servicegraph({serviceid:service.serviceid, width:"100", height:"70", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
+</div>
+
+<p>
+{% if service.algorithm == 1 %}
+Service "{{ service.name }}" had a problem, if at least one of the following services had a problem.
+{% elseif service.algorithm == 2 %}
+Service "{{ service.name }}" had a problem, if all of the following services had a problem.
+{% else %}
+Service state is not calculated for service "{{ service.name }}".
+{% endif %}
+</p>
+
+<table>
+	<thead>
+	<tr>
+		<th>Service Name</th>
+		<th>OK Time</th>
+		<th>Problem Time</th>
+		<th>Down Time</th>
+	</tr>
+	</thead>
+
+	<tbody>
+		{% for dep in service.dependencies %}
+			{% set child = zabbix_service_get({serviceids:dep.servicedownid, output:"extend"}) %}
+			{% set res = zabbix_service_getsla({ serviceids:child["0"].serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %} {# get SLA record for service in the FROM-TO time interval #}
+			{% set sla = attribute(attribute(res,child["0"].serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
+			<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+				<td style="width: 100%; text-align: left;">{{ child[0].name }}</td>
+				<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
+				<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
+				<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>
+			</tr>
+		{% endfor %}
+	</tbody>
+	
+	<tfoot></tfoot>
+	
+</table>
+
+{#% include 'report1/detail-items.html.twig' %#}
+
+<pre>
+{#{ dump(service.dependencies) }#}
+</pre>

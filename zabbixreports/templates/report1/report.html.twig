@@ -1,42 +1,24 @@
 <html>
 <head>
-	<title>Zabbix IT Service Availability Report</title>
-	<base href="{{ BASE }}" />
-	<link rel="stylesheet" type="text/css" href="report.css" />
+	{% set REPORT_TITLE = "IT Service Availability Report" %}
+	{% include 'common/common-head.html.twig' %}
+	{% set PERIOD = TO|date("U") - FROM|date("U") %}
 </head>
 <body>
-<h1>Zabbix IT Service Availability Report</h1>
+{% include 'common/common-body.html.twig' %}
+{% import 'common/common-macros.twig' as m %}
 
-<p>Report period: {{ FROM|date("Y-m-d H:i:s") }} - {{ TO|date("Y-m-d H:i:s") }}</p>
-<p>Zabbix Version: {{ zabbix_apiinfo_version({}) }}</p>
+<h1>{{ REPORT_TITLE }}</h1>
 
-<table border=1>
-	<tr>
-		<th>Service Name</th>
-		<th>From Date</th>
-		<th>To Date</th>
-		<th>SLA</th>
-		<th>OK Time</th>
-		<th>Problem Time</th>
-		<th>Down Time</th>
-	</tr>
+<p>This SLA report was created at: {{ "now"|date(timeformat) }}</p>
+<p>Report time period: {{ FROM|date(timeformat) }} - {{ TO|date(timeformat) }} ({{ m.format_secs(PERIOD) }})</p>
 
-	{% for service in zabbix_service_get({ output:'extend' }) %}
-	{% set sla = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %}
-	{% set slaa = attribute(sla,service.serviceid).sla %}			
-	<tr>
-		<td>{{ service.name }}</td>
-		<td>{{ attribute(slaa,"0").from|date("Y-m-d H:i:s") }}</td>
-		<td>{{ attribute(slaa,"0").to|date("Y-m-d H:i:s") }}</td>
-		<td>{{ "%0.4f"|format(attribute(slaa,"0").sla) }}%</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").okTime)|date("%a d %H:%I:%S") }}</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").problemTime)|date("%a d %H:%I:%S") }}</td>
-		<td>{{ secs_to_dateinterval(attribute(slaa,"0").downtimeTime)|date("%a d %H:%I:%S") }}</td>
-	</tr>
-	{% endfor %}
-</table>
+{% include 'report1/overview.html.twig' %}
 
-<pagefooter content-center="{PAGENO}" line="1" />
-<setpagefooter />
+{% for service in zabbix_service_get({ output:'extend', filter:{ showsla:"1" }, selectDependencies:"extend" }) %} {# iterate over all IT services #}
+	{% include 'report1/detail.html.twig' with {service : service} %}
+{% endfor %} {# end iterate over all IT services #}
+
+
 </body>
 </html>

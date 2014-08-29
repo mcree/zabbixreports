@@ -80,11 +80,15 @@ class ZabbixExtension extends \Twig_Extension {
 					$logger->debug ( "start function zabbix_$method", $args );
 					
 					if ($method == "graph") {
-						$res = $this->getGraphImageById($args);
-					} else {						
+						$res = $this->getGraphImageById ( "chart2", $args );
+					} else if ($method == "itemgraph") {
+						$res = $this->getGraphImageById ( "chart", $args );
+					} else if ($method == "servicegraph") {
+						$res = $this->getGraphImageById ( "chart5", $args );
+					} else {
 						/* @var $zbx \ZabbixApi */
-						$zbx = $this->zbx;						
-						// $zbx->printCommunication(true);						
+						$zbx = $this->zbx;
+						// $zbx->printCommunication(true);
 						$res = $zbx->request ( $method, $args );
 					}
 					
@@ -103,20 +107,22 @@ class ZabbixExtension extends \Twig_Extension {
 					$dt2 = clone $dt1;
 					$dt2->add ( new \DateInterval ( 'PT' . $secs . 'S' ) );
 					return date_diff ( $dt1, $dt2 );
-				} ),
-				new \Twig_SimpleFunction ( 'zbx_graph', function ($id) {
-					return $this->getGraphImageById ( $id );
 				} ) 
 		);
 	}
 	
+	// https://zabbix2.hbit.sztaki.hu/zabbix/chart.php?itemid=23699&period=2592000&stime=20140730123648&updateProfile=1&profileIdx=web.item.graph&profileIdx2=23699&sid=c2bc8d1b26333f3e&width=1616
+	
 	/**
-	 * Gets ZABBIX graph data from graph2.php
-	 * 
-	 * @param $params associative array of URL parameters passed to ZABBIX graph2.php, atleast graphid is mandatory
+	 * Gets ZABBIX graph data from graphX.php
+	 *
+	 * @param $params associative
+	 *        	array of URL parameters passed to ZABBIX graph2.php, atleast graphid is mandatory
+	 * @param $type one
+	 *        	of "chart", "chart2", "chart5", etc...
 	 * @return temporary filename that contains graph data
 	 */
-	public function getGraphImageById($params) {
+	public function getGraphImageById($type, $params) {
 		
 		/* @var $logger LoggerInterface */
 		$logger = $this->container->get ( 'logger' );
@@ -124,15 +130,15 @@ class ZabbixExtension extends \Twig_Extension {
 		/* @var $zbx \ZabbixApi */
 		$zbx = $this->zbx;
 		
-		$logger->debug ( "fetching graph $graphid", $params );
+		$logger->debug ( "fetching $type $graphid", $params );
 		
-		$urcmp=array();
-		foreach($params as $k => $v) {
-			$urlcmp[]="$k=".urlencode($v);
+		$urcmp = array ();
+		foreach ( $params as $k => $v ) {
+			$urlcmp [] = "$k=" . urlencode ( $v );
 		}
-		$urlargs=implode("&", $urlcmp);
+		$urlargs = implode ( "&", $urlcmp );
 		
-		$url = $this->zbx_url . "/chart2.php?$urlargs";
+		$url = $this->zbx_url . "/$type.php?$urlargs";
 		
 		$ch = curl_init ();
 		curl_setopt ( $ch, CURLOPT_URL, $url );

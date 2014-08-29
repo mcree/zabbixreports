@@ -1,0 +1,19 @@
+{##
+ # common TWIG macro definitions for ZabbixReports
+ #
+ # you can include this file with directive:
+ #  {% import 'common/common-macros.twig' as macros %}
+ #}
+
+{## 
+ # Formats date interval specified in seconds to human readable representation.
+ #
+ # @param secs date interval in seconds
+ # @returns seconds formatted by intervalformat
+ #
+ # @see http://php.net/DateInterval.format for format parameters
+ # @see config.yml for default value of variable "intervalformat"
+ #}
+{% macro format_secs(secs) %}
+	{{ secs_to_dateinterval(secs)|date(intervalformat) }}
+{% endmacro %}

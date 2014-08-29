@@ -1,0 +1,9 @@
+{# common html head elements for ZabbixReports #}
+
+{# use default CSS #}
+{% include "common/zabbixreports-css.html.twig" %}
+
+{# specify base dir for \mPDF #}
+<base href="{{ BASE }}" />
+
+<title>{{ REPORT_TITLE }}</title>
