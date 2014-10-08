@@ -1,0 +1,55 @@
+<table>
+	<thead>
+	<tr>
+		<th>Service Name</th>
+		<th>SLA / min SLA</th>
+		<th>OK Time</th>
+		<th>Problem Time</th>
+		<th>Down Time</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	{% set count = 0 %}
+	{% set sumsla = 0 %}
+	{% set sumgoodsla = 0 %}
+	{% set sumok = 0 %}
+	{% set sumproblem = 0 %}
+	{% set sumdown = 0 %}
+			
+	{% for service in zabbix_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
+	{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %} {# get SLA record for service in the FROM-TO time interval #}
+	{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
+	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+		<td style="width: 100%; text-align: left;">{{ service.name }}</td>
+		{% if sla.sla >= service.goodsla %}
+			<td style="text-align: center">{{ "%0.4f"|format(sla.sla) }}% / {{ "%0.4f"|format(service.goodsla) }}%</td>
+		{% else %}
+			<td style="color:red; text-align: center">{{ "%0.4f"|format(sla.sla) }}% / {{ "%0.4f"|format(service.goodsla) }}%</td>
+		{% endif %}
+		<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
+		<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
+		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>
+		
+		{% set count = count + 1 %}
+		{% set sumsla = sumsla + sla.sla %}
+		{% set sumgoodsla = sumgoodsla + service.goodsla %}
+		{% set sumok = sumok + sla.okTime %}
+		{% set sumproblem = sumproblem + sla.problemTime %}
+		{% set sumdown = sumdown + sla.downtimeTime %}
+				
+	</tr>
+	{% endfor %} {# end iterate over all IT services #}
+	</tbody>
+	
+	<tfoot>
+		<tr>
+			<th>Average</th>
+			<th>{{ "%0.4f"|format(sumsla/count) }}% / {{ "%0.4f"|format(sumgoodsla/count) }}%</th>
+			<th>{{ m.format_secs((sumok/count)|round) }}</th>
+			<th>{{ m.format_secs((sumproblem/count)|round) }}</th>
+			<th>{{ m.format_secs((sumdown/count)|round) }}</th>				
+		</tr>
+	</tfoot>
+	
+</table>

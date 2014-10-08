@@ -2,31 +2,10 @@
 <h2>Overview</h2>
 
 <p>The following table describes the overall SLA state of all monitored IT services.</p> 
-<table>
-	<thead>
-	<tr>
-		<th>Service Name</th>
-		<th>SLA / min SLA</th>
-		<th>OK Time</th>
-		<th>Problem Time</th>
-		<th>Down Time</th>
-	</tr>
-	</thead>
 
-	<tbody>
-	{% for service in zabbix_service_get({ output:'extend', filter:{ showsla:"1" } }) %} {# iterate over all IT services #}
-	{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %} {# get SLA record for service in the FROM-TO time interval #}
-	{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
-	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
-		<td style="width: 100%; text-align: left;">{{ service.name }}</td>
-		<td style="text-align: center">{{ "%0.4f"|format(sla.sla) }}% / {{ "%0.4f"|format(service.goodsla) }}%</td>
-		<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
-		<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
-		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>
-	</tr>
-	{% endfor %} {# end iterate over all IT services #}
-	</tbody>
-	
-	<tfoot></tfoot>
-	
-</table>
+{% set serviceids = [] %}
+{% for service in zabbix_service_get({ parentids:["30"] }) %} {# iterate over all IT services #}
+	{% set serviceids = serviceids|merge([service.serviceid]) %} {# collect service ids to array #}
+{% endfor %}
+{% include 'report1/servicetable.html.twig' with {serviceids : serviceids} %}
+
