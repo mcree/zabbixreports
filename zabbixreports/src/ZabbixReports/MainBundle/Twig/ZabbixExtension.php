@@ -85,6 +85,8 @@ class ZabbixExtension extends \Twig_Extension {
 						$res = $this->getGraphImageById ( "chart", $args );
 					} else if ($method == "servicegraph") {
 						$res = $this->getGraphImageById ( "chart5", $args );
+					} else if ($method == "service.get.deep") {
+						$res = $this->zabbix_service_get_deep ( $args );
 					} else {
 						/* @var $zbx \ZabbixApi */
 						$zbx = $this->zbx;
@@ -109,6 +111,38 @@ class ZabbixExtension extends \Twig_Extension {
 					return date_diff ( $dt1, $dt2 );
 				} ) 
 		);
+	}
+	
+	/**
+	 * Recursively walk the Zabbix IT Service tree and collect all serviceids directly or indirectly under a list of given services
+	 *
+	 * @param unknown $serviceids
+	 *        	array of service ids to walk from
+	 * @return array of service ids
+	 */
+	public function zabbix_service_get_deep($servideids) {
+		/* @var $zbx \ZabbixApi */
+		$zbx = $this->zbx;
+		
+		$res = $zbx->request ( "service.get", array (
+				"serviceids" => $servideids,
+				"selectDependencies" => "extend" 
+		) );
+		
+		$ids = array ();
+		foreach ( $res as $r ) {
+			$ids [] = $r->serviceid;
+			
+			$dwnids = array ();
+			foreach ( $r->dependencies as $dep ) {
+				$dwnids [] = $dep->servicedownid;
+			}
+			$a = $this->zabbix_service_get_deep ( $dwnids );
+			
+			$ids = array_merge ( $ids, $a );
+		}
+		
+		return $ids;
 	}
 	
 	// https://zabbix2.hbit.sztaki.hu/zabbix/chart.php?itemid=23699&period=2592000&stime=20140730123648&updateProfile=1&profileIdx=web.item.graph&profileIdx2=23699&sid=c2bc8d1b26333f3e&width=1616

@@ -6,38 +6,55 @@
 		<th>OK Time</th>
 		<th>Problem Time</th>
 		<th>Down Time</th>
+		<th>Problems</th>
 	</tr>
 	</thead>
 
 	<tbody>
-	{% set count = 0 %}
-	{% set sumsla = 0 %}
-	{% set sumgoodsla = 0 %}
-	{% set sumok = 0 %}
-	{% set sumproblem = 0 %}
-	{% set sumdown = 0 %}
-			
+	{% set count = 0 %} {# define counters for average calculation #}
+	{% set sumsla = 0 %} {# ... #}
+	{% set sumgoodsla = 0 %} {# ... #}
+	{% set sumok = 0 %} {# ... #}
+	{% set sumproblem = 0 %} {# ... #}
+	{% set sumdown = 0 %} {# ... #}
+	{% set sumproblems = 0 %} {# ... #}
+				
 	{% for service in zabbix_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
-	{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %} {# get SLA record for service in the FROM-TO time interval #}
-	{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
+	
+		
 	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
 		<td style="width: 100%; text-align: left;">{{ service.name }}</td>
+		{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:{	from:FROM|date("U"), to:TO|date("U")} }) %} {# get array of SLA records for service in the FROM-TO time interval #}
+		{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
 		{% if sla.sla >= service.goodsla %}
-			<td style="text-align: center">{{ "%0.4f"|format(sla.sla) }}% / {{ "%0.4f"|format(service.goodsla) }}%</td>
+			<td style="text-align: center" class="sla-good">{{ "%0.2f"|format(sla.sla) }}% / {{ "%0.2f"|format(service.goodsla) }}%</td>
 		{% else %}
-			<td style="color:red; text-align: center">{{ "%0.4f"|format(sla.sla) }}% / {{ "%0.4f"|format(service.goodsla) }}%</td>
+			<td style="text-align: center" class="sla-bad">{{ "%0.2f"|format(sla.sla) }}% / {{ "%0.2f"|format(service.goodsla) }}%</td>
 		{% endif %}
 		<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
 		<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
-		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>
+		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>		
+		<td style="text-align: center">
+			{% set problems = 0 %}
+			{% set childrenids = zabbix_service_get_deep([service.serviceid]) %}
+			{% set children = zabbix_service_get({output:'extend', serviceids:childrenids}) %}				
+			{% for child in children %}
+				{% if child.triggerid is defined %}
+					{% set eventcount = zabbix_event_get({ objectids:child.triggerid, time_from:FROM|date("U"), time_till:TO|date("U"), countOutput:true }) %}
+					{% set problems = problems + (eventcount/2)|round(0) %}
+				{% endif %}
+			{% endfor %}
+			{{ problems }}
+		</td>	
 		
-		{% set count = count + 1 %}
-		{% set sumsla = sumsla + sla.sla %}
-		{% set sumgoodsla = sumgoodsla + service.goodsla %}
-		{% set sumok = sumok + sla.okTime %}
-		{% set sumproblem = sumproblem + sla.problemTime %}
-		{% set sumdown = sumdown + sla.downtimeTime %}
-				
+		{% set count = count + 1 %} {# increment counters for average calculation #}
+		{% set sumsla = sumsla + sla.sla %} {# ... #}
+		{% set sumgoodsla = sumgoodsla + service.goodsla %} {# ... #}
+		{% set sumok = sumok + sla.okTime %} {# ... #}
+		{% set sumproblem = sumproblem + sla.problemTime %} {# ... #}
+		{% set sumdown = sumdown + sla.downtimeTime %} {# ... #}
+		{% set sumproblems = sumproblems + problems %} {# ... #}
+						
 	</tr>
 	{% endfor %} {# end iterate over all IT services #}
 	</tbody>
@@ -45,10 +62,11 @@
 	<tfoot>
 		<tr>
 			<th>Average</th>
-			<th>{{ "%0.4f"|format(sumsla/count) }}% / {{ "%0.4f"|format(sumgoodsla/count) }}%</th>
+			<th>{{ "%0.2f"|format(sumsla/count) }}% / {{ "%0.2f"|format(sumgoodsla/count) }}%</th>
 			<th>{{ m.format_secs((sumok/count)|round) }}</th>
 			<th>{{ m.format_secs((sumproblem/count)|round) }}</th>
 			<th>{{ m.format_secs((sumdown/count)|round) }}</th>				
+			<th>{{ "%0.2f"|format(sumproblems/count) }}</th>		
 		</tr>
 	</tfoot>
 	
