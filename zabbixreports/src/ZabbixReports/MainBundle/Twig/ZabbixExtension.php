@@ -71,11 +71,22 @@ class ZabbixExtension extends \Twig_Extension {
 		return array (
 				new \Twig_SimpleFunction ( 'zabbix_*', function () {
 					
+					static $cache;
+					
 					/* @var $logger LoggerInterface */
 					$logger = $this->container->get ( 'logger' );
 					
 					$method = str_replace ( '_', '.', func_get_arg ( 2 ) );
 					$args = func_get_arg ( 3 );
+					$ckey = serialize ( $method ) . serialize ( $args );
+					
+					if (array_key_exists ( $ckey, $cache )) {
+						$cval = $cache [$ckey];
+						$logger->debug ( "using cache for function zabbix_$method", array (
+								$cval 
+						) );
+						return $cval;
+					}
 					
 					$logger->debug ( "start function zabbix_$method", $args );
 					
@@ -97,6 +108,7 @@ class ZabbixExtension extends \Twig_Extension {
 					$logger->debug ( "end function zabbix_$method", array (
 							$res 
 					) );
+					$cache [$ckey] = $res;
 					
 					return $res;
 				}, array (
@@ -120,26 +132,34 @@ class ZabbixExtension extends \Twig_Extension {
 	 *        	array of service ids to walk from
 	 * @return array of service ids
 	 */
-	public function zabbix_service_get_deep($servideids) {
+	public function zabbix_service_get_deep($serviceids) {
+		static $srvs; // service cache
+		
 		/* @var $zbx \ZabbixApi */
 		$zbx = $this->zbx;
 		
-		$res = $zbx->request ( "service.get", array (
-				"serviceids" => $servideids,
-				"selectDependencies" => "extend" 
-		) );
+		if (! isset ( $srvs )) {
+			$srvs = $zbx->request ( "service.get", array (
+					"selectDependencies" => "extend" 
+			) );
+			/* @var $this->logger LoggerInterface */
+			$this->logger->debug ( "pre-filled service cache", $srvs );
+		}
 		
 		$ids = array ();
-		foreach ( $res as $r ) {
-			$ids [] = $r->serviceid;
+		foreach ( $srvs as $r ) {
+			$id = $r->serviceid;
 			
-			$dwnids = array ();
-			foreach ( $r->dependencies as $dep ) {
-				$dwnids [] = $dep->servicedownid;
+			if (array_search ( $id, $serviceids ) !== false) {
+				$ids [] = $id;
+				$dwnids = array ();
+				foreach ( $r->dependencies as $dep ) {
+					$dwnids [] = $dep->servicedownid;
+				}
+				$a = $this->zabbix_service_get_deep ( $dwnids );
+				
+				$ids = array_merge ( $ids, $a );
 			}
-			$a = $this->zabbix_service_get_deep ( $dwnids );
-			
-			$ids = array_merge ( $ids, $a );
 		}
 		
 		return $ids;

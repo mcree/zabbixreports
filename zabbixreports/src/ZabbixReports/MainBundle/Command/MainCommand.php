@@ -59,15 +59,20 @@ class MainCommand extends ContainerAwareCommand {
 
 		$templatedir = dirname($this->getContainer()->get('kernel')->getRootdir()).DIRECTORY_SEPARATOR."templates";
 		$logger->debug("templatedir: $templatedir");
+
+		$template = $input->getOption ( "template" );
 		
 		/* @var $loader FilesystemLoader */
 		$loader = $this->getContainer()->get('twig.loader');
-		$loader->setPaths($templatedir);
+		$loader->setPaths(array(
+				$templatedir.DIRECTORY_SEPARATOR."common",
+				dirname($template)
+		));
 		//$this->container->get('twig.loader')->addPath('../../../../web/templates/', $namespace = '__main__');
 
-		$template = $input->getOption ( "template" );
-		$vars["BASE"]=$templatedir.DIRECTORY_SEPARATOR.$template;
-		$html = $engine->render ( $template."/report.html.twig", $vars );		
+		$vars["TEMPLATEDIR"]=$templatedir;
+		$vars["BASE"]=dirname($template);
+		$html = $engine->render ( basename($template), $vars );		
 		
 		$mpdfopts = array (
 				'constructorArgs' => array (), // Constructor arguments. Numeric array. Don't forget about points 2 and 3 in Warning section!

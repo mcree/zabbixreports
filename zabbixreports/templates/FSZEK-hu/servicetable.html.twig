@@ -1,0 +1,126 @@
+{% set show_trend = 1 %}
+{% if TO == REFTO and FROM == REFFROM %}
+	{% set show_trend = 0 %}
+{% endif %}
+<table>
+	<thead>
+	<tr>
+		<th>Szolgáltatás</th>
+		<th>SLA</th>
+		<th>Rendben</th>
+		<th>Probléma</th>
+		<th>Karbantartás</th>
+		<th>Kiesés</th>
+	</tr>
+	</thead>
+
+	<tbody>
+	{% set count = 0 %} {# define counters for average calculation #}
+	{% set sumsla = 0 %} {# ... #}
+	{% set sumrefsla = 0 %} {# ... #}
+	{% set sumgoodsla = 0 %} {# ... #}
+	{% set sumok = 0 %} {# ... #}
+	{% set sumproblem = 0 %} {# ... #}
+	{% set sumdown = 0 %} {# ... #}
+	{% set sumproblems = 0 %} {# ... #}
+	{% set sumrefproblems = 0 %} {# ... #}
+					
+	{% for service in zabbix_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
+	
+	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+		<td style="width: 100%; text-align: left;">{{ service.name }}</td>
+		{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:[{from:FROM|date("U"), to:TO|date("U")}, {from:REFFROM|date("U"), to:REFTO|date("U")}]  }) %} {# get array of SLA records for service in the FROM-TO time interval #}
+		{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
+		{% set refsla = attribute(attribute(res,service.serviceid).sla,"1") %} {# get SLA record for the specified service with second specified time interval (1) #}
+		<td style="text-align: center">
+		{% if sla.sla >= service.goodsla %}
+			<span class="sla-good">{{ "%0.2f"|format(sla.sla) }}%</span>
+		{% else %}
+			<span class="sla-bad">{{ "%0.2f"|format(sla.sla) }}%</span>
+		{% endif %}
+		{% if show_trend == 1 %}
+			{% if sla.sla > refsla.sla %}
+				<span class="trend-good">(⇗)</span>
+			{% elseif sla.sla < refsla.sla %}
+				<span class="trend-bad">(⇘)</span>
+			{% else %}
+				<span class="trend-ok">(⇒)</span>
+			{% endif %}
+		{% endif %}
+		</td>
+		<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
+		<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
+		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>		
+		<td style="text-align: center">
+			{% set problems = 0 %}
+			{% set refproblems = 0 %}
+			{% set childrenids = zabbix_service_get_deep([service.serviceid]) %}
+			{% set children = zabbix_service_get({output:'extend', serviceids:childrenids}) %}				
+			{% set triggerids = [] %}
+			{% for child in children %} {# collect dependent trigger ids #}
+				{% if child.triggerid is defined %}
+					{% set triggerids = triggerids|merge([child.triggerid]) %}
+				{% endif %}
+			{% endfor %}
+			{% set eventcount = zabbix_event_get({ objectids:triggerids, time_from:FROM|date("U"), time_till:TO|date("U"), countOutput:true }) %}
+			{% set refeventcount = zabbix_event_get({ objectids:triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U"), countOutput:true }) %}
+			{% set problems = problems + (eventcount/2)|round(0) %}
+			{% set refproblems = refproblems + (refeventcount/2)|round(0) %}
+			{{ problems }} db
+			{% if show_trend == 1 %}
+				{% if problems > refproblems %}
+					<span class="trend-bad">(⇗)</span>
+				{% elseif problems < refproblems %}
+					<span class="trend-good">(⇘)</span>
+				{% else %}
+					<span class="trend-ok">(⇒)</span>
+				{% endif %}
+			{% endif %}
+			</td>	
+		
+		{% set count = count + 1 %} {# increment counters for average calculation #}
+		{% set sumsla = sumsla + sla.sla %} {# ... #}
+		{% set sumrefsla = sumrefsla + refsla.sla %} {# ... #}
+		{% set sumgoodsla = sumgoodsla + service.goodsla %} {# ... #}
+		{% set sumok = sumok + sla.okTime %} {# ... #}
+		{% set sumproblem = sumproblem + sla.problemTime %} {# ... #}
+		{% set sumdown = sumdown + sla.downtimeTime %} {# ... #}
+		{% set sumproblems = sumproblems + problems %} {# ... #}
+		{% set sumrefproblems = sumrefproblems + refproblems %} {# ... #}
+								
+	</tr>
+	{% endfor %} {# end iterate over all IT services #}
+	</tbody>
+	
+	<tfoot>
+		<tr>
+			<th>Átlag</th>
+			<th>{{ "%0.2f"|format(sumsla/count) }}%
+				{% if show_trend == 1 %}
+					{% if sumsla > sumrefsla %}
+						(⇗)
+					{% elseif sumsla < sumrefsla %}
+						(⇘)
+					{% else %}
+						(⇒)
+					{% endif %}
+				{% endif %}
+			</th>
+			<th>{{ m.format_secs((sumok/count)|round) }}</th>
+			<th>{{ m.format_secs((sumproblem/count)|round) }}</th>
+			<th>{{ m.format_secs((sumdown/count)|round) }}</th>				
+			<th>{{ "%0.2f"|format(sumproblems/count) }} db
+				{% if show_trend == 1 %}
+					{% if sumproblems > sumrefproblems %}
+						(⇗)
+					{% elseif sumproblems < sumrefproblems %}
+						(⇘)
+					{% else %}
+						(⇒)
+					{% endif %}
+				{% endif %}
+			</th>		
+		</tr>
+	</tfoot>
+	
+</table>

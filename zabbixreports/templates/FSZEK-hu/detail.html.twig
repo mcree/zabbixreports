@@ -1,0 +1,33 @@
+{% if service.dependencies is defined and not service.dependencies is empty %}
+
+<div class="nobr">
+<h2>{{ service.name }} - részletek</h2>
+
+<p>Az alábbi grafikon a szolgáltatás éves rendelkezésre állásának alakulását szemlélteti, heti bontásban.</p>
+<div class="graph"><img src="{{ zabbix_servicegraph({serviceid:service.serviceid, width:"100", height:"70", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
+</div>
+
+<p>
+{% if service.algorithm == 1 %}
+A "{{ service.name }}" szolgáltatás akkor minősül hibásnak, ha az alábbi szolgáltatások <strong>bármelyike</strong> hibás.
+{% elseif service.algorithm == 2 %}
+A "{{ service.name }}" szolgáltatás akkor minősül hibásnak, ha az alábbi szolgáltatások <strong>mindegyike</strong> hibás.
+{% else %}
+A "{{ service.name }}" szolgáltatás nem tartozik az SLA mért értékei közé.
+{% endif %}
+</p>
+
+{% set serviceids = [] %}
+{% for dep in service.dependencies %}
+	{% set serviceids = serviceids|merge([dep.servicedownid]) %} {# collect service ids to array #}
+{% endfor %}
+{% include 'servicetable.html.twig' with {serviceids : serviceids} %}
+
+{% for dep in serviceids %}
+	{% set srv = zabbix_service_get({ output:'extend', serviceids:dep,  selectDependencies:"extend" }) %}
+	{% include 'detail.html.twig' with {service : srv[0] } %}
+{% endfor %}
+
+{#% include 'detail-items.html.twig' %#}
+
+{% endif %}

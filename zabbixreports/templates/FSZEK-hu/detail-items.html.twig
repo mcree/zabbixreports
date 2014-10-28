@@ -1,0 +1,14 @@
+
+{% for dep in service.dependencies %}
+	{% set child = zabbix_service_get({serviceids:dep.servicedownid, output:"extend"}) %}
+	{% if child["0"].triggerid %}
+		<div class="nobr">
+		<h3>Detailed item information for "{{ child[0].name }}"</h3>
+		{% set trigger = zabbix_trigger_get({triggerids:child["0"].triggerid, selectItems:"extend"}) %}
+		{% for item in trigger["0"].items %}
+			<div class="graph"><img src="{{ zabbix_itemgraph({itemid:item.itemid, width:"500", height:"130", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
+		{% endfor %}
+		</div>
+	{% endif %}
+	
+{% endfor %}

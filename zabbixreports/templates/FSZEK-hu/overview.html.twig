@@ -1,0 +1,24 @@
+{% set serviceids = [] %}
+{% for service in zabbix_service_get({ parentids:["30"] }) %} {# iterate over all IT services #}
+	{% set serviceids = serviceids|merge([service.serviceid]) %} {# collect service ids to array #}
+{% endfor %}
+
+<h2>Referencia</h2>
+
+<p>Az alábbi táblázat a megfigyelés alatt tartott szolgáltatások SLA 
+értékeinek összesítése a referencia időszakra.</p> 
+
+{% include 'servicetable.html.twig' with {serviceids : serviceids, FROM:REFFROM, TO:REFTO} %}
+
+<h2>Áttekintés</h2>
+
+<p>Az alábbi táblázat a megfigyelés alatt tartott szolgáltatások SLA 
+értékeinek összesítése a jelentési időszakra, a referencia
+időszakhoz viszonyított trendmutatókkal.</p> 
+
+{% include 'servicetable.html.twig' with {serviceids : serviceids} %}
+
+
+<p>Az egyes hozzáférési pontok hálózati kieséseinek időbeli alakulása a jelentési időszakra:</p>
+
+<div class="graph"><img src="{{ zabbix_graph({graphid:"6432", width:"600", height:"130", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
