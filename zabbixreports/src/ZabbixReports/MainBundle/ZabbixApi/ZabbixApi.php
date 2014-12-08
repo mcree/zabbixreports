@@ -1,4 +1,7 @@
 <?php
+
+namespace ZabbixReports\MainBundle\ZabbixApi;
+
 /**
  * @file    ZabbixApi.class.php
  * @brief   Class file for the implementation of the class ZabbixApi.
@@ -29,17 +32,20 @@
 /**
  * @brief   Concrete class for the Zabbix API.
  */
+require_once 'ZabbixApiAbstract.class.php';
 
-class ZabbixApi extends ZabbixApiAbstract
+class ZabbixApi extends \ZabbixApiAbstract
 {
 	
 	/**
 	 * @brief   Auth string.
 	 */
-	
 	private $auth = '';
 	
-	
+        /* @var $logger LoggerInterface */
+	protected $logger;
+
+        
 	/**
 	 * @brief   Class constructor.
 	 *
@@ -48,13 +54,16 @@ class ZabbixApi extends ZabbixApiAbstract
 	 * @param   $password   Password.
 	 */
 	
-	public function __construct($apiUrl='', $user='', $password='')
+	public function __construct(\Psr\Log\LoggerInterface $logger, $apiUrl='', $user='', $password='')
 	{
-		if($apiUrl)
-			$this->setApiUrl($apiUrl);
+            $this->logger = $logger;
+            $logger->debug ( "connecting to $apiUrl as $user" );
+    
+            if($apiUrl)
+		$this->setApiUrl($apiUrl."/api_jsonrpc.php");
 	
-		if($user && $password)
-			$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
+            if($user && $password)
+		$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
 	}
 	
 	

@@ -27,7 +27,6 @@ twig:
     globals:
         timeformat:   'Y-m-d H:i:s'
         intervalformat: '%%ad %%H:%%I:%%S'
-        
 
 # Assetic Configuration
 assetic:

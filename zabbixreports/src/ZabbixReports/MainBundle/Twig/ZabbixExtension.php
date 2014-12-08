@@ -6,8 +6,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Psr\Log\LoggerInterface;
 
 // load ZabbixApi
-require 'ZabbixApiAbstract.class.php';
-require 'ZabbixApi.class.php';
 class ZabbixExtension extends \Twig_Extension {
 	
 	/* @var $logger LoggerInterface */
@@ -32,25 +30,12 @@ class ZabbixExtension extends \Twig_Extension {
 	 * @param unknown $zbx_password
 	 *        	ZABBUX password
 	 */
-	public function __construct(ContainerInterface $container, $zbx_url, $zbx_username, $zbx_password) {
+	public function __construct(ContainerInterface $container, LoggerInterface $logger, \ZabbixReports\MainBundle\ZabbixApi\ZabbixApi $zbx) {
+		$this->logger = $logger;
+		$this->logger->debug ( "initializing twig zabbix extension" );
 		$this->container = $container;
-		$this->zbx_url = $zbx_url;
-		
-		$this->logger = $this->container->get ( 'logger' );
-		
-		try {
-			
-			$this->logger->debug ( "connecting to $zbx_url as $zbx_username" );
-			
-			// connect to Zabbix API
-			$this->zbx = new \ZabbixApi ( $zbx_url . "/api_jsonrpc.php", $zbx_username, $zbx_password );
-		} catch ( Exception $e ) {
-			
-			// Exception in ZabbixApi catched
-			$this->logger->critical ( "Exception in ZabbixApi", array (
-					$e->getMessage () 
-			) );
-		}
+//		$this->zbx_url = $zbx->getApiUrl();
+                $this->zbx = $zbx;                
 	}
 	
 	/*
@@ -68,10 +53,14 @@ class ZabbixExtension extends \Twig_Extension {
 		/* @var $this->logger LoggerInterface */
 		$this->logger->debug ( "registering twig zabbix extension" );
 		
-		return array (
+		$res = array (
 				new \Twig_SimpleFunction ( 'zabbix_*', function () {
 					
 					static $cache;
+                                        
+                                        if(!is_array($cache)) {
+                                            $cache = array();
+                                        }
 					
 					/* @var $logger LoggerInterface */
 					$logger = $this->container->get ( 'logger' );
@@ -123,7 +112,9 @@ class ZabbixExtension extends \Twig_Extension {
 					return date_diff ( $dt1, $dt2 );
 				} ) 
 		);
-	}
+		$this->logger->debug ( "done registering twig zabbix extension" );
+                return $res;
+        }
 	
 	/**
 	 * Recursively walk the Zabbix IT Service tree and collect all serviceids directly or indirectly under a list of given services
@@ -184,7 +175,7 @@ class ZabbixExtension extends \Twig_Extension {
 		/* @var $zbx \ZabbixApi */
 		$zbx = $this->zbx;
 		
-		$logger->debug ( "fetching $type $graphid", $params );
+		$logger->debug ( "fetching $type", $params );
 		
 		$urcmp = array ();
 		foreach ( $params as $k => $v ) {

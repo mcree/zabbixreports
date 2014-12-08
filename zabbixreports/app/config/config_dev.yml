@@ -21,10 +21,14 @@ monolog:
         chromephp:
             type:  chromephp
             level: info
-        console_alt:
-            type:  stream
-            path:  /dev/stderr
-            level: debug
+        console:
+            type:   console
+            bubble: false
+            verbosity_levels:
+                VERBOSITY_NORMAL:       DEBUG
+                VERBOSITY_VERBOSE:      DEBUG
+                VERBOSITY_VERY_VERBOSE: DEBUG
+                VERBOSITY_DEBUG:        DEBUG
 
 assetic:
     use_controller: true

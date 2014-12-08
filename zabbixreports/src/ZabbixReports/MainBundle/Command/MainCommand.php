@@ -30,7 +30,7 @@ class MainCommand extends ContainerAwareCommand {
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		$input->validate ();
+                $input->validate ();
 		
 		/* @var $logger LoggerInterface */
 		$logger = $this->getContainer ()->get ( 'logger' );
@@ -51,9 +51,11 @@ class MainCommand extends ContainerAwareCommand {
 			}
 		}
 		
+		$logger->debug ( "init mpdf" );
 		/* @var $mpdfService MpdfService */
 		$mpdfService = $this->getContainer ()->get ( 'tfox.mpdfport' );
 		
+		$logger->debug ( "init twig" );
 		/* @var $engine TwigEngine */
 		$engine = $this->getContainer ()->get ( 'templating' );
 
@@ -62,6 +64,7 @@ class MainCommand extends ContainerAwareCommand {
 
 		$template = $input->getOption ( "template" );
 		
+		$logger->debug ( "loading template" );
 		/* @var $loader FilesystemLoader */
 		$loader = $this->getContainer()->get('twig.loader');
 		$loader->setPaths(array(
@@ -72,8 +75,16 @@ class MainCommand extends ContainerAwareCommand {
 
 		$vars["TEMPLATEDIR"]=$templatedir;
 		$vars["BASE"]=dirname($template);
-		$html = $engine->render ( basename($template), $vars );		
-		
+
+		$logger->debug ( "rendering template" );
+                
+                try {
+                    $html = $engine->render ( basename($template), $vars );
+                } catch (\Exception $e) {
+                    $logger->error("caught error",array($e)) ;
+                    print $e;
+                }
+                
 		$mpdfopts = array (
 				'constructorArgs' => array (), // Constructor arguments. Numeric array. Don't forget about points 2 and 3 in Warning section!
 				'writeHtmlMode' => null, // $mode argument for WriteHTML method
@@ -84,7 +95,9 @@ class MainCommand extends ContainerAwareCommand {
 				);
 				
 		$logger->debug ( "HTML Template: $html" );
-		
+
+       		$logger->debug ( "generating pdf" );
+
 		$pdf = $mpdfService->generatePdf ( $html, $mpdfopts );
 		
 		$logger->info ( "Done." );
