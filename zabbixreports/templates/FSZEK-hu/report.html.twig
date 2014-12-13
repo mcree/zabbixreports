@@ -26,7 +26,7 @@
 
 {% include 'overview.html.twig' %}
 
-{% for service in zabbix_service_get({ output:'extend', filter:{ showsla:"1" }, parentids:["30"], selectDependencies:"extend" }) %} {# iterate over all IT services #}
+{% for service in zbx_api_service_get({ output:'extend', filter:{ showsla:"1" }, parentids:["30"], selectDependencies:"extend" }) %} {# iterate over all IT services #}
 	{% include 'detail.html.twig' with {service : service} %}
 {% endfor %} {# end iterate over all IT services #}
 

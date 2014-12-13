@@ -13,10 +13,12 @@ namespace ZabbixReports\MainBundle\Twig;
  *
  * @author mcree
  */
-class ErrorEventListener {
+class ErrorEventListener
+{
 
-    public function onKernelException(\Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $e) {
+    public function onKernelException(\Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent $e)
+    {
         print "aaaa $e";
     }
-    
+
 }

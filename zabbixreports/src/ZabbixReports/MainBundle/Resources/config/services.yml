@@ -8,11 +8,26 @@ services:
         class: ZabbixReports\MainBundle\ZabbixApi\ZabbixApi
         arguments: ['@logger', %zbx_url%, %zbx_username%, %zbx_password% ]
         
-#    zabbix_reports_main.example:
-#        class: %zabbix_reports_main.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
-    zabbixreports.twig.zabbix_extension:
-        class: ZabbixReports\MainBundle\Twig\ZabbixExtension
+    zabbixreports.twig.zbx_api_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxApiExtension
+        arguments: ['@service_container', '@logger', '@zabbix_api' ]
+        tags:
+          - { name: twig.extension }
+
+    zabbixreports.twig.zbx_graph_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxGraphExtension
+        arguments: ['@service_container', '@logger', '@zabbix_api' ]
+        tags:
+          - { name: twig.extension }
+
+    zabbixreports.twig.zbx_service_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxServiceExtension
+        arguments: ['@service_container', '@logger', '@zabbix_api' ]
+        tags:
+          - { name: twig.extension }
+
+    zabbixreports.twig.zbx_util_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxUtilExtension
         arguments: ['@service_container', '@logger', '@zabbix_api' ]
         tags:
           - { name: twig.extension }

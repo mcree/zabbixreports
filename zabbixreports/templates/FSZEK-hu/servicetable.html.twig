@@ -25,11 +25,11 @@
 	{% set sumproblems = 0 %} {# ... #}
 	{% set sumrefproblems = 0 %} {# ... #}
 					
-	{% for service in zabbix_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
+	{% for service in zbx_api_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
 	
 	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
 		<td style="width: 100%; text-align: left;">{{ service.name }}</td>
-		{% set res = zabbix_service_getsla({ serviceids:service.serviceid, intervals:[{from:FROM|date("U"), to:TO|date("U")}, {from:REFFROM|date("U"), to:REFTO|date("U")}]  }) %} {# get array of SLA records for service in the FROM-TO time interval #}
+		{% set res = zbx_api_service_getsla({ serviceids:service.serviceid, intervals:[{from:FROM|date("U"), to:TO|date("U")}, {from:REFFROM|date("U"), to:REFTO|date("U")}]  }) %} {# get array of SLA records for service in the FROM-TO time interval #}
 		{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}	
 		{% set refsla = attribute(attribute(res,service.serviceid).sla,"1") %} {# get SLA record for the specified service with second specified time interval (1) #}
 		<td style="text-align: center">
@@ -54,16 +54,16 @@
 		<td style="text-align: center">
 			{% set problems = 0 %}
 			{% set refproblems = 0 %}
-			{% set childrenids = zabbix_service_get_deep([service.serviceid]) %}
-			{% set children = zabbix_service_get({output:'extend', serviceids:childrenids}) %}				
+			{% set childrenids = zbx_service_get_deep([service.serviceid]) %}
+			{% set children = zbx_api_service_get({output:'extend', serviceids:childrenids}) %}
 			{% set triggerids = [] %}
 			{% for child in children %} {# collect dependent trigger ids #}
 				{% if child.triggerid is defined %}
 					{% set triggerids = triggerids|merge([child.triggerid]) %}
 				{% endif %}
 			{% endfor %}
-			{% set eventcount = zabbix_event_get({ objectids:triggerids, time_from:FROM|date("U"), time_till:TO|date("U"), countOutput:true }) %}
-			{% set refeventcount = zabbix_event_get({ objectids:triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U"), countOutput:true }) %}
+			{% set eventcount = zbx_api_event_get({ objectids:triggerids, time_from:FROM|date("U"), time_till:TO|date("U"), countOutput:true }) %}
+			{% set refeventcount = zbx_api_event_get({ objectids:triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U"), countOutput:true }) %}
 			{% set problems = problems + (eventcount/2)|round(0) %}
 			{% set refproblems = refproblems + (refeventcount/2)|round(0) %}
 			{{ problems }} db
@@ -93,7 +93,7 @@
 	</tbody>
 	
 	<tfoot>
-		<tr>
+		<tr>{% set count = count + 0.000001 %}
 			<th>Átlag</th>
 			<th>{{ "%0.2f"|format(sumsla/count) }}%
 				{% if show_trend == 1 %}

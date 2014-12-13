@@ -2,11 +2,13 @@
 
 <div class="nobr">
 <h2>{{ service.name }} - részletek</h2>
+
 {#
 <p>Az alábbi grafikon a szolgáltatás éves rendelkezésre állásának alakulását szemlélteti, heti bontásban.</p>
-<div class="graph"><img src="{{ zabbix_servicegraph({serviceid:service.serviceid, width:"100", height:"70", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
+<div class="graph"><img src="{{ zbx_graph_service({serviceid:service.serviceid, width:"100", height:"70", stime:FROM|date("U"), period:PERIOD}) }}" /></div>
 </div>
 #}
+	
 <p>
 {% if service.algorithm == 1 %}
 A "{{ service.name }}" szolgáltatás akkor minősül hibásnak, ha az alábbi szolgáltatások <strong>bármelyike</strong> hibás.
@@ -24,10 +26,10 @@ A "{{ service.name }}" szolgáltatás nem tartozik az SLA mért értékei közé
 {% include 'servicetable.html.twig' with {serviceids : serviceids} %}
 
 {% for dep in serviceids %}
-	{% set srv = zabbix_service_get({ output:'extend', serviceids:dep,  selectDependencies:"extend" }) %}
+	{% set srv = zbx_api_service_get({ output:'extend', serviceids:dep,  selectDependencies:"extend" }) %}
 	{% include 'detail.html.twig' with {service : srv[0] } %}
 {% endfor %}
 
-{#% include 'detail-items.html.twig' %#}
+{% include 'detail-items.html.twig' %}
 
 {% endif %}

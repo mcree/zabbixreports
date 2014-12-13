@@ -7,10 +7,12 @@ namespace ZabbixReports\MainBundle\Twig;
  *
  * @author mcree
  */
-class EventExtension extends \Twig_Extension {
+class EventExtension extends \Twig_Extension
+{
 
-    public function getName() {
-        
+    public function getName()
+    {
+
     }
 
 }

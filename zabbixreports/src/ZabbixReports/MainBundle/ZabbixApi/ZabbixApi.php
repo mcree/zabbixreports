@@ -44,26 +44,31 @@ class ZabbixApi extends \ZabbixApiAbstract
 	
         /* @var $logger LoggerInterface */
 	protected $logger;
+	/**
+	 * @var string|API root url
+	 */
+	private $apiRootUrl;
 
-        
+
 	/**
 	 * @brief   Class constructor.
 	 *
-	 * @param   $apiUrl     API url (e.g. http://FQDN/zabbix/api_jsonrpc.php)
+	 * @param   $apiRootUrl     API url (e.g. http://FQDN/zabbix) part /api_jsonrpc.php is appended automatically
 	 * @param   $user       Username.
 	 * @param   $password   Password.
 	 */
 	
-	public function __construct(\Psr\Log\LoggerInterface $logger, $apiUrl='', $user='', $password='')
+	public function __construct(\Psr\Log\LoggerInterface $logger, $apiRootUrl='', $user='', $password='')
 	{
             $this->logger = $logger;
-            $logger->debug ( "connecting to $apiUrl as $user" );
+            $logger->debug ( "connecting to $apiRootUrl as $user" );
     
-            if($apiUrl)
-		$this->setApiUrl($apiUrl."/api_jsonrpc.php");
+            if($apiRootUrl)
+		$this->setApiUrl($apiRootUrl."/api_jsonrpc.php");
 	
             if($user && $password)
 		$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
+		$this->apiRootUrl = $apiRootUrl;
 	}
 	
 	
@@ -71,7 +76,15 @@ class ZabbixApi extends \ZabbixApiAbstract
 	public function getAuth() {
 		return $this->auth;
 	}
-	
+
+	/**
+	 * @return string|API
+	 */
+	public function getApiRootUrl()
+	{
+		return $this->apiRootUrl;
+	}
+
 }
 
 ?>
