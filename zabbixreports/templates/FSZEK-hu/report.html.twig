@@ -13,21 +13,21 @@
 {% block report %}
 <table class="cimsor">
 	<tr>
-		<td><img class="logo" src="fszek-logo.jpg" /></td>
+		<td><img class="logo" src="{{ data_uri('fszek-logo.jpg') }}" /></td>
 		<td>
 			<h1>Fővárosi Szabó Ervin Könyvtár</h1>
 			<p>SLA jelentés</p>
 			<p>{{ FROM|date(timeformat) }} - {{ TO|date(timeformat) }} ({{ m.format_secs(PERIOD) }})</p>
 			<p style="font-size:80%">referencia: {{ REFFROM|date(timeformat) }} - {{ REFTO|date(timeformat) }} ({{ m.format_secs(REFPERIOD) }})</p>
 		</td>
-		<td><img class="logo" src="hbit-logo.jpg" /></td>
+		<td><img class="logo" src="{{ data_uri('hbit-logo.jpg') }}" /></td>
 	</tr>
 </table>
 
 {% include 'overview.html.twig' %}
 
-{% for service in zbx_api_service_get({ output:'extend', filter:{ showsla:"1" }, parentids:["30"], selectDependencies:"extend" }) %} {# iterate over all IT services #}
-	{% include 'detail.html.twig' with {service : service} %}
+{#% for service in zbx_api_service_get({ output:'extend', filter:{ showsla:"1" }, parentids:["30"], selectDependencies:"extend" }) %} {# iterate over all IT services #}
+	{#% include 'detail.html.twig' with {service : service} %}
 {% endfor %} {# end iterate over all IT services #}
 
 {% endblock %}

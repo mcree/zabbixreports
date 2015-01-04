@@ -6,7 +6,7 @@ services:
 
     zabbix_api:
         class: ZabbixReports\MainBundle\ZabbixApi\ZabbixApi
-        arguments: ['@logger', %zbx_url%, %zbx_username%, %zbx_password% ]
+        arguments: ['@logger', '@zbx_cache', %zbx_url%, %zbx_username%, %zbx_password% ]
         
     zabbixreports.twig.zbx_api_extension:
         class: ZabbixReports\MainBundle\Twig\ZbxApiExtension
@@ -31,6 +31,16 @@ services:
         arguments: ['@service_container', '@logger', '@zabbix_api' ]
         tags:
           - { name: twig.extension }
+
+    zabbixreports.twig.zbx_period_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxPeriodExtension
+        arguments: ['@service_container', '@logger', '@zabbix_api' ]
+        tags:
+          - { name: twig.extension }
+
+    zbx_cache:
+        class: ZabbixReports\MainBundle\Cache\ZbxCache
+        arguments: ['@service_container', '@logger' ]
 
     error_handler:
         class: ZabbixReports\MainBundle\Twig\ErrorEventListener

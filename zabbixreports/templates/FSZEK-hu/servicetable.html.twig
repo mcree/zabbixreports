@@ -62,6 +62,9 @@
 					{% set triggerids = triggerids|merge([child.triggerid]) %}
 				{% endif %}
 			{% endfor %}
+			{% set periods = zbx_period_get({"objectids":triggerids, time_from:FROM|date("U"), time_till:TO|date("U")}) %}
+			{% set pers = zbx_period_query({periods:periods, sortby:"secs", filterby:"state", filterval:1, limit:10}) %}
+			<pre>{{ dump(pers) }}</pre>
 			{% set eventcount = zbx_api_event_get({ objectids:triggerids, time_from:FROM|date("U"), time_till:TO|date("U"), countOutput:true }) %}
 			{% set refeventcount = zbx_api_event_get({ objectids:triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U"), countOutput:true }) %}
 			{% set problems = problems + (eventcount/2)|round(0) %}

@@ -32,6 +32,8 @@ namespace ZabbixReports\MainBundle\ZabbixApi;
 /**
  * @brief   Concrete class for the Zabbix API.
  */
+use ZabbixReports\MainBundle\Cache\ZbxCache;
+
 require_once 'ZabbixApiAbstract.class.php';
 
 class ZabbixApi extends \ZabbixApiAbstract
@@ -49,6 +51,10 @@ class ZabbixApi extends \ZabbixApiAbstract
 	 */
 	private $apiRootUrl;
 
+	/**
+	 * @var $cache ZbxCache
+	 */
+	private $cache;
 
 	/**
 	 * @brief   Class constructor.
@@ -58,16 +64,18 @@ class ZabbixApi extends \ZabbixApiAbstract
 	 * @param   $password   Password.
 	 */
 	
-	public function __construct(\Psr\Log\LoggerInterface $logger, $apiRootUrl='', $user='', $password='')
+	public function __construct(\Psr\Log\LoggerInterface $logger, ZbxCache $cache, $apiRootUrl='', $user='', $password='')
 	{
-            $this->logger = $logger;
-            $logger->debug ( "connecting to $apiRootUrl as $user" );
+		$this->cache = $cache;
+        $this->logger = $logger;
+        $logger->debug ( "connecting to $apiRootUrl as $user" );
     
-            if($apiRootUrl)
-		$this->setApiUrl($apiRootUrl."/api_jsonrpc.php");
+        if($apiRootUrl)
+			$this->setApiUrl($apiRootUrl."/api_jsonrpc.php");
 	
-            if($user && $password)
-		$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
+		if($user && $password)
+			$this->auth = $this->userLogin(array('user' => $user, 'password' => $password));
+
 		$this->apiRootUrl = $apiRootUrl;
 	}
 	
@@ -84,6 +92,21 @@ class ZabbixApi extends \ZabbixApiAbstract
 	{
 		return $this->apiRootUrl;
 	}
+
+	public function request($method, $params = NULL, $resultArrayKey = '', $auth = TRUE)
+	{
+		$id = "zbx_api_req_".$method."_".serialize($params);
+		//$this->logger->debug("cache key: $id");
+		if($this->cache->contains($id)) {
+			//$this->logger->debug("cache hit - using cached results");
+			return $this->cache->fetch($id);
+		}
+		//$this->logger->debug("cache miss - initiating real request");
+		$res = parent::request($method, $params, $resultArrayKey, $auth);
+		$this->cache->save($id,$res,3600);
+		return $res;
+	}
+
 
 }
 

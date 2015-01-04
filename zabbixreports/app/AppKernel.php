@@ -20,7 +20,7 @@ class AppKernel extends Kernel
             new JMS\DiExtraBundle\JMSDiExtraBundle($this),
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new ZabbixReports\MainBundle\ZabbixReportsMainBundle(),
-        	new TFox\MpdfPortBundle\TFoxMpdfPortBundle(),
+        	new TFox\MpdfPortBundle\TFoxMpdfPortBundle()
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

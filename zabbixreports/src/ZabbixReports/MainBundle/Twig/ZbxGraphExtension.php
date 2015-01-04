@@ -110,11 +110,19 @@ class ZbxGraphExtension extends ExtensionBase
 
             $log->debug("HTTP $code got $size bytes in " . $info ['total_time'] . ' seconds from ' . $info ['url']);
 
-            $outfile = tempnam(sys_get_temp_dir(), "zabbixreports");
-            file_put_contents($outfile, $res);
-
-            $log->debug("saved graph data as $outfile");
-            return "$outfile";
+            $inline=true;
+            if(!$inline) {
+                $outfile = tempnam(sys_get_temp_dir(), "zabbixreports");
+                file_put_contents($outfile, $res);
+                $log->debug("saved graph data as $outfile");
+                return "$outfile";
+            } else {
+                $mime = "image/png";
+                $base64  = base64_encode($res);
+                $data = 'data:' . $mime . ';base64,' . $base64;
+                $log->debug("saved inline graph data");
+                return $data;
+            }
         } else {
             $log->error("could not get $url");
             return "ERROR: COULD NOT GET $url";

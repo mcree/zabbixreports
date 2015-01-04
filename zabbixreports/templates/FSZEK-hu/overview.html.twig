@@ -18,7 +18,6 @@ időszakhoz viszonyított trendmutatókkal.</p>
 
 {% include 'servicetable.html.twig' with {serviceids : serviceids} %}
 
-
 <p>Az egyes hozzáférési pontok hálózati kieséseinek időbeli alakulása a jelentési időszakra:</p>
 
 <div class="graph"><img src="{{ zbx_graph_custom({graphid:"6432", width:"600", height:"130", stime:FROM|date("U"), period:PERIOD}) }}" /></div>

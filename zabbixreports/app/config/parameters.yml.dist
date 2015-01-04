@@ -17,3 +17,5 @@ parameters:
     zbx_url: https://example.tld/zabbix
     zbx_username: zabbixuser
     zbx_password: topsecret
+
+    zbx_cachedir:           %kernel.cache_dir%/zbx_cache
