@@ -41,7 +41,7 @@ class CachingTwigFunction extends \Twig_SimpleFunction
 
             if (array_key_exists($ckey, $cache)) {
                 $cval = $cache [$ckey];
-                $log->debug("using cached results for " . func_get_arg(2) . " " . $ckey);
+                $log->debug("using cached results for " . serialize(func_get_arg(2)) . " " . serialize($ckey));
                 return $cval;
             }
 

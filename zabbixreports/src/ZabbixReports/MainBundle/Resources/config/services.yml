@@ -38,6 +38,12 @@ services:
         tags:
           - { name: twig.extension }
 
+    zabbixreports.twig.zbx_stats_extension:
+        class: ZabbixReports\MainBundle\Twig\ZbxStatsExtension
+        arguments: ['@service_container', '@logger', '@zabbix_api' ]
+        tags:
+          - { name: twig.extension }
+
     zbx_cache:
         class: ZabbixReports\MainBundle\Cache\ZbxCache
         arguments: ['@service_container', '@logger' ]

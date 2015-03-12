@@ -1,10 +1,16 @@
 {% extends 'zabbixreports-base.html.twig' %}
 
-{% set REFLEN = "-3months" %}
 {% set PERIOD = TO|date("U") - FROM|date("U") %}
+
+{% set REFLEN = "-1months" %}
 {% set REFTO = (FROM)|date(timeformat) %}
 {% set REFFROM = (FROM ~ " " ~ REFLEN)|date(timeformat) %}
 {% set REFPERIOD = REFTO|date("U") - REFFROM|date("U") %}
+
+{% set REF2LEN = "-3months" %}
+{% set REF2TO = (FROM)|date(timeformat) %}
+{% set REF2FROM = (FROM ~ " " ~ REF2LEN)|date(timeformat) %}
+{% set REF2PERIOD = REF2TO|date("U") - REF2FROM|date("U") %}
 
 {% import 'common-macros.twig' as m %}
 
@@ -18,7 +24,8 @@
 			<h1>Fővárosi Szabó Ervin Könyvtár</h1>
 			<p>SLA jelentés</p>
 			<p>{{ FROM|date(timeformat) }} - {{ TO|date(timeformat) }} ({{ m.format_secs(PERIOD) }})</p>
-			<p style="font-size:80%">referencia: {{ REFFROM|date(timeformat) }} - {{ REFTO|date(timeformat) }} ({{ m.format_secs(REFPERIOD) }})</p>
+            <p style="font-size:80%">referencia: {{ REFFROM|date(timeformat) }} - {{ REFTO|date(timeformat) }} ({{ m.format_secs(REFPERIOD) }})</p>
+            <p style="font-size:80%">referencia2: {{ REF2FROM|date(timeformat) }} - {{ REF2TO|date(timeformat) }} ({{ m.format_secs(REF2PERIOD) }})</p>
 		</td>
 		<td><img class="logo" src="{{ data_uri('hbit-logo.jpg') }}" /></td>
 	</tr>

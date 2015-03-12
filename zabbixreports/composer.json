@@ -24,7 +24,8 @@
 		"sensio/distribution-bundle" : "~2.3",
 		"doctrine/doctrine-bundle" : "~1.2",
 		"symfony/dependency-injection": "2.6.*",
-	    "gajus/dindent": "2.0.*"
+	    "gajus/dindent": "2.0.*",
+        "phpstats/phpstats": "dev-master"
 	},
 	"autoload" : {
 		"psr-0" : {

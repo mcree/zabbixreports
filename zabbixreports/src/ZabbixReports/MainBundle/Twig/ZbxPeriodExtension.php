@@ -225,7 +225,7 @@ class ZbxPeriodExtension extends ExtensionBase {
         };
 
         $f2 = function (\Twig_Environment $env, $context, $args) use ($log,$cache) {
-            $log->debug("start function zbx_period_sort", $args);
+            $log->debug("start function zbx_period_query", $args);
 
             $res = $args["periods"];
 
@@ -270,7 +270,7 @@ class ZbxPeriodExtension extends ExtensionBase {
                 $res = array_slice($res, 0, $limit);
             }
 
-            $log->debug("end function zbx_period_sort", array(
+            $log->debug("end function zbx_period_query", array(
                 $res
             ));
 
