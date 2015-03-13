@@ -29,7 +29,15 @@ class ZbxStatsExtension extends ExtensionBase {
 
             $log->debug("start function zbx_stats_add", array($key,$value));
 
-            $data[$key][]=$value;
+            if(!array_key_exists($key,$data)) {
+                $data[$key] = array();
+            }
+
+            if(is_array($value)) {
+                $data[$key] = array_merge($data[$key],$value);
+            } else {
+                $data[$key][] = $value;
+            }
 
             $log->debug("end function zbx_stats_add", array(
                 $data
@@ -100,12 +108,31 @@ class ZbxStatsExtension extends ExtensionBase {
             return $res;
         };
 
+        $f6 = function ($args) use ($log,$data) {
+
+            $log->debug("start function zbx_stats_max", array($args));
+
+            if(count($data)>0) {
+                asort($data);
+                $res = $data[count($data) - 1];
+            } else {
+                $res = 0;
+            }
+
+            $log->debug("end function zbx_stats_max", array(
+                $res
+            ));
+
+            return $res;
+        };
+
         $res = array(
             new \Twig_SimpleFunction('zbx_stats_add', $f1),
             new \Twig_SimpleFunction('zbx_stats_reset', $f2),
             new \Twig_SimpleFunction('zbx_stats_average', $f3),
             new \Twig_SimpleFunction('zbx_stats_gaverage', $f4),
             new \Twig_SimpleFunction('zbx_stats_sum', $f5),
+            new \Twig_SimpleFunction('zbx_stats_max', $f6),
         );
         $log->debug("done registering twig zabbix stats extension");
         return $res;

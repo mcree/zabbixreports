@@ -28,6 +28,33 @@ class ZbxPeriodExtension extends ExtensionBase {
     }
 
 
+    function period_get_stats($data) {
+        /* @var $log LoggerInterface */
+        $log = $this->container->get('logger');
+
+        $log->debug("start function zbx_period_get_stats", $data);
+
+        $stats=array();
+
+        $s = new \PHPStats\Stats();
+
+        foreach($data as $period) {
+            $secs['all'][]=$period["secs"];
+            $secs[$period["state"]][]=$period["secs"];
+        }
+
+        foreach($secs as $key => $value) {
+            $stats[$key]["values"] = $value;
+            $stats[$key]["count"] = count($value);
+            $stats[$key]["max"] = max($value);
+            $stats[$key]["min"] = min($value);
+            $stats[$key]["average"] = $s->average($value);
+        }
+
+        $log->debug("end function zbx_period_get_stats", $stats);
+
+        return $stats;
+    }
 
     /*
      * (non-PHPdoc) @see Twig_Extension::getFunctions()
@@ -86,7 +113,7 @@ class ZbxPeriodExtension extends ExtensionBase {
             }
             $objectids = array_unique($objectids);
 
-            $res=array();
+            $data=array();
 
             // treat events by each source object individually
             foreach($objectids as $objectid) {
@@ -105,22 +132,26 @@ class ZbxPeriodExtension extends ExtensionBase {
                 unset($evargs["time_till"]);
                 $evs = $zbx->request('event.get', $evargs);
 
-                // synthesize initial event record
+                // synthesize initial event record (all OK, 0 secs)
                 $irec=array(
                     "start_clock" => $time_from,
                     "end_clock" => $time_from,
                     "secs" => 0,
                     "acknowledged" => 0,
-                    "objectid" => $objectid
+                    "objectid" => $objectid,
+                    "prev_state" => 0,
+                    "state" => 0,
+                    "next_state" => 0
                 );
-                if(count($evs) == 0) {
-                    $irec["prev_state"]=0;
-                    $irec["state"]=0;
-                } else {
-                    $irec["prev_state"]=0;
-                    $irec["state"]=$evs[0]->value;
-                    $irec["acknowledged"]=$evs[0]->acknowledged;
-                }
+//                if(count($evs) == 0) {
+//                    $irec["prev_state"]=0;
+//                    $irec["state"]=0;
+//                    $irec["next_state"]=0;
+//                } else {
+//                    $irec["prev_state"]=0;
+//                    $irec["state"]=$evs[0]->value;
+//                    $irec["acknowledged"]=$evs[0]->acknowledged;
+//                }
                 $tmpres=array($irec);
 
                 //$log->debug("zbx_period_get initial period for object $objectid: [".$irec["start_clock"]."-".$irec["end_clock"]." (".ZbxPeriodExtension::format_secs($irec["secs"])."s) ".$irec["prev_state"]."->".$irec["state"]." ack:".$irec["acknowledged"]."]");
@@ -138,21 +169,27 @@ class ZbxPeriodExtension extends ExtensionBase {
                 unset($evargs["limit"]);
                 $evs = $zbx->request('event.get', $evargs);
 
+                //print"<pre>"; var_dump($evs);
+
                 // enumerate internal periods
                 $rec = array();
                 $sumsecs=0;
                 $lastev=null;
                 foreach($evs as $ev) {
+
+                    //$log->debug("zbx_period_get found event eventid:".$ev->eventid." clock:".strftime("%c",$ev->clock)." value:".$ev->value);
+
                     $rec["start_clock"]=$irec["end_clock"];
                     $rec["end_clock"]=$ev->clock;
                     $rec["secs"]=$rec["end_clock"]-$rec["start_clock"];
                     $rec["prev_state"]=$irec["state"];
-                    $rec["state"]=$ev->value;
+                    $rec["state"]=$irec["next_state"];
+                    $rec["next_state"]=$ev->value;
                     $rec["acknowledged"]=$ev->acknowledged;
                     $rec["event"]=$ev;
                     $rec["objectid"]=$objectid;
 
-                    //$log->debug("zbx_period_get found period for object $objectid: [".$rec["start_clock"]."-".$rec["end_clock"]." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->".$rec["state"]." ack:".$rec["acknowledged"]."]");
+                    //$log->debug("zbx_period_get found period for object $objectid: [".strftime("%c",$rec["start_clock"])."-".strftime("%c",$rec["end_clock"])." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
 
                     $sumsecs+=$rec["secs"];
                     $tmpres[]=$rec;
@@ -165,36 +202,43 @@ class ZbxPeriodExtension extends ExtensionBase {
                 $rec["end_clock"]=$time_till;
                 $rec["secs"]=$rec["end_clock"]-$rec["start_clock"];
                 $rec["prev_state"]=$irec["state"];
-                $rec["state"]=$irec["state"];
+                $rec["state"]=$irec["next_state"];
+                $rec["next_state"]=$irec["next_state"];
                 $rec["acknowledged"]=0;
                 $rec["event"]=$lastev;
                 $rec["objectid"]=$objectid;
                 $sumsecs+=$rec["secs"];
                 $tmpres[]=$rec;
-                //$log->debug("zbx_period_get closing period for object $objectid: [".$rec["start_clock"]."-".$rec["end_clock"]." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->".$rec["state"]." ack:".$rec["acknowledged"]."]");
-
+                //$log->debug("zbx_period_get found closing period for object $objectid: [".strftime("%c",$rec["start_clock"])."-".strftime("%c",$rec["end_clock"])." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
                 //$log->debug("zbx_period_get internim processing object $objectid, total time: ".ZbxPeriodExtension::format_secs($sumsecs));
 
                 // merge periods with unchanged state
-                $irec=$tmpres[0];
+                $irec=array_shift($tmpres);
                 $mergedres=array();
                 $lastrec=null;
-                foreach($tmpres as $rec) {
-                    $lastrec=$rec;
+                while(count($tmpres)>0) {
+                    $rec = array_shift($tmpres);
                     if($irec["state"] == $rec["state"]) {
                         $irec["end_clock"] = $rec["end_clock"];
                         $irec["secs"]+=$rec["secs"];
                         //$log->debug("zbx_period_get merging to period for object $objectid: [".$irec["start_clock"]."-".$irec["end_clock"]." (".ZbxPeriodExtension::format_secs($irec["secs"])."s) ".$irec["prev_state"]."->".$irec["state"]." ack:".$irec["acknowledged"]."]");
                         //$log->debug("zbx_period_get merging from period for object $objectid: [".$rec["start_clock"]."-".$rec["end_clock"]." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->".$rec["state"]." ack:".$rec["acknowledged"]."]");
+                        $lastrec=$rec;
                     } else {
-                        $irec["next_state"]=$rec["state"];
+                        //$irec["next_state"]=$rec["state"];
                         $mergedres[]=$irec;
                         $irec=$rec;
                     }
                 }
                 if($lastrec != $irec) {
-                    $irec["next_state"]=$rec["state"];
+                    //$log->debug("adding last rec");
+                    //$irec["next_state"]=$rec["state"];
                     $mergedres[]=$irec;
+                } else {
+                    //$rec=$lastrec;
+                    //$log->debug("zbx_period_get skipping last rec: [".strftime("%c",$rec["start_clock"])."-".strftime("%c",$rec["end_clock"])." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
+                    //$rec=$irec;
+                    //$log->debug("zbx_period_get skipping last rec: [".strftime("%c",$rec["start_clock"])."-".strftime("%c",$rec["end_clock"])." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
                 }
 
                 // cleanup zero len periods
@@ -208,14 +252,16 @@ class ZbxPeriodExtension extends ExtensionBase {
                 $sumsecs=0;
                 foreach($mergedres as $rec) {
                     $sumsecs+=$rec["secs"];
-                    $log->debug("zbx_period_get result period for object $objectid: [".$rec["start_clock"]."-".$rec["end_clock"]." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
+                    $log->debug("zbx_period_get result period for object $objectid: [".strftime("%c",$rec["start_clock"])."-".strftime("%c",$rec["end_clock"])." (".ZbxPeriodExtension::format_secs($rec["secs"])."s) ".$rec["prev_state"]."->[".$rec["state"]."]->".$rec["next_state"]." ack:".$rec["acknowledged"]."]");
                 }
 
                 $log->debug("zbx_period_get finished processing object $objectid, total time: ".ZbxPeriodExtension::format_secs($sumsecs));
                 //$res[$objectid] = $mergedres;
-                $res = array_merge($res,$mergedres);
+                $data = array_merge($data,$mergedres);
             }
 
+
+            $res = array("data" => $data, "stats" => $this->period_get_stats($data));
 
             $log->debug("end function zbx_period_get", array(
                 $res
@@ -277,9 +323,14 @@ class ZbxPeriodExtension extends ExtensionBase {
             return $res;
         };
 
+        $c = new \ReflectionClass($this);
+        $m = $c->getMethod("period_get_stats");
+        $f3 = $m->getClosure($this);
+
         $res = array(
             new CachingTwigFunction('zbx_period_get', $f, $this->container),
-            new CachingTwigFunction('zbx_period_query', $f2, $this->container)
+            new CachingTwigFunction('zbx_period_query', $f2, $this->container),
+            new CachingTwigFunction('zbx_period_get_stats', $f3, $this->container)
         );
         $log->debug("done registering twig zabbix period extension");
         return $res;

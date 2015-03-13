@@ -31,6 +31,8 @@
 	</tr>
 </table>
 
+{#% set periods = zbx_period_get({"objectids":[22562], time_from:FROM|date("U"), time_till:TO|date("U")}) %#}
+
 {% include 'overview.html.twig' %}
 
 {#% for service in zbx_api_service_get({ output:'extend', filter:{ showsla:"1" }, parentids:["30"], selectDependencies:"extend" }) %} {# iterate over all IT services #}

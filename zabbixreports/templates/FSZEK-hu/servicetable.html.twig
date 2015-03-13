@@ -7,179 +7,175 @@
     {% set show_trend2 = 0 %}
 {% endif %}
 <table style="width:100%">
-	<thead>
-	<tr>
-		<th>Szolgáltatás</th>
-		<th>SLA</th>
-		<th>Rendben</th>
-		<th>Probléma</th>
-		<th>Karbantartás</th>
-		<th>Kiesés (max/avg)</th>
-	</tr>
-	</thead>
+    <thead>
+    <tr>
+        <th>Szolgáltatás</th>
+        <th>SLA</th>
+        <th>Rendben</th>
+        <th>Probléma</th>
+        <th>Karbantartás</th>
+        <th>Kiesés (max/avg)</th>
+    </tr>
+    </thead>
 
     {% do zbx_stats_reset("/st_.*/") %} {# reset statistics counters starting with "st_" #}
 
-	<tbody>
+    <tbody>
 
-	{% for service in zbx_api_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
-	
-	<tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
-		<td style="text-align: left;">{{ service.name }}</td>
-		{% set res = zbx_api_service_getsla({ serviceids:service.serviceid, intervals:[{from:FROM|date("U"), to:TO|date("U")}, {from:REFFROM|date("U"), to:REFTO|date("U")}, {from:REF2FROM|date("U"), to:REF2TO|date("U")}]  }) %} {# get array of SLA records for service in the FROM-TO time interval #}
-		{% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}
-        {% do zbx_stats_add("st_sla", sla.sla) %}
-        {% do zbx_stats_add("st_ok", sla.okTime) %}
-        {% do zbx_stats_add("st_problem", sla.problemTime) %}
-        {% do zbx_stats_add("st_down", sla.downtimeTime) %}
-        {% set refsla = attribute(attribute(res,service.serviceid).sla,"1") %} {# get SLA record for the specified service with second specified time interval (1) #}
-        {% do zbx_stats_add("st_refsla", refsla.sla) %}
-        {% do zbx_stats_add("st_refok", refsla.okTime) %}
-        {% do zbx_stats_add("st_refproblem", refsla.problemTime) %}
-        {% do zbx_stats_add("st_refdown", refsla.downtimeTime) %}
-        {% set ref2sla = attribute(attribute(res,service.serviceid).sla,"2") %} {# get SLA record for the specified service with second specified time interval (1) #}
-        {% do zbx_stats_add("st_ref2sla", ref2sla.sla) %}
-        {% do zbx_stats_add("st_ref2ok", ref2sla.okTime) %}
-        {% do zbx_stats_add("st_ref2problem", ref2sla.problemTime) %}
-        {% do zbx_stats_add("st_ref2down", ref2sla.downtimeTime) %}
-		<td style="text-align: center">
-		{% if sla.sla >= service.goodsla %}
-			<span class="sla-good">{{ "%0.2f"|format(sla.sla) }}%</span>
-		{% else %}
-			<span class="sla-bad">{{ "%0.2f"|format(sla.sla) }}%</span>
-		{% endif %}
-		{% if show_trend == 1 %}
-			{% if sla.sla > refsla.sla %}
-				<span class="trend-good">(⇗)</span>
-			{% elseif sla.sla < refsla.sla %}
-				<span class="trend-bad">(⇘)</span>
-			{% else %}
-				<span class="trend-ok">(⇒)</span>
-			{% endif %}
-		{% endif %}
-		</td>
-		<td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
-		<td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
-		<td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>		
-		<td style="text-align: center">
-            {% spaceless %}
-			{% set problems = 0 %}
-			{% set refproblems = 0 %}
-			{% set childrenids = zbx_service_get_deep([service.serviceid]) %}
-			{% set children = zbx_api_service_get({output:'extend', serviceids:childrenids}) %}
-			{% set triggerids = [] %}
-			{% for child in children %} {# collect dependent trigger ids #}
-				{% if child.triggerid is defined %}
-					{% set triggerids = triggerids|merge([child.triggerid]) %}
-				{% endif %}
-			{% endfor %}
-            {% set periods = zbx_period_get({"objectids":triggerids, time_from:FROM|date("U"), time_till:TO|date("U")}) %}
-            {% set pers = zbx_period_query({periods:periods, sortby:"secs", filterby:"state", filterval:1}) %}
-            {% if pers|length >0 %}
-              {% set maxproblem = pers[0] %}
-              <pre>{{ dump(maxproblem) }}</pre>
-            {% else %}
-              {% set maxproblem = {"secs":0} %}
-            {% endif %}
-            {% set problems = zbx_period_query({periods:periods, sortby:"secs", filterby:"state", filterval:1}) %}
-            {% set problemcount = problems | length %}
-            {% do zbx_stats_add("st_problems", problemcount) %}
+    {% for service in zbx_api_service_get({ output:'extend', serviceids:serviceids }) %} {# iterate over given IT services #}
 
-            {% set refperiods = zbx_period_get({"objectids":triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U")}) %}
-            {% set refproblems = zbx_period_query({periods:refperiods, sortby:"secs", filterby:"state", filterval:1}) %}
-            {% set refproblemcount = refproblems | length %}
-            {% do zbx_stats_add("st_refproblems", refproblemcount) %}
+        <tr class="{{ cycle(['odd', 'even'], loop.index0) }}">
+            <td style="text-align: left;">{{ service.name }}</td>
+            {% set res = zbx_api_service_getsla({ serviceids:service.serviceid, intervals:[{from:FROM|date("U"), to:TO|date("U")}, {from:REFFROM|date("U"), to:REFTO|date("U")}, {from:REF2FROM|date("U"), to:REF2TO|date("U")}]  }) %} {# get array of SLA records for service in the FROM-TO time interval #}
+            {% set sla = attribute(attribute(res,service.serviceid).sla,"0") %} {# get SLA record for the specified service with first specified time interval (0) #}
+            {% do zbx_stats_add("st_sla", sla.sla) %}
+            {% do zbx_stats_add("st_ok", sla.okTime) %}
+            {% do zbx_stats_add("st_problem", sla.problemTime) %}
+            {% do zbx_stats_add("st_down", sla.downtimeTime) %}
+            {% set refsla = attribute(attribute(res,service.serviceid).sla,"1") %} {# get SLA record for the specified service with second specified time interval (1) #}
+            {% do zbx_stats_add("st_refsla", refsla.sla) %}
+            {% do zbx_stats_add("st_refok", refsla.okTime) %}
+            {% do zbx_stats_add("st_refproblem", refsla.problemTime) %}
+            {% do zbx_stats_add("st_refdown", refsla.downtimeTime) %}
+            {% set ref2sla = attribute(attribute(res,service.serviceid).sla,"2") %} {# get SLA record for the specified service with second specified time interval (1) #}
+            {% do zbx_stats_add("st_ref2sla", ref2sla.sla) %}
+            {% do zbx_stats_add("st_ref2ok", ref2sla.okTime) %}
+            {% do zbx_stats_add("st_ref2problem", ref2sla.problemTime) %}
+            {% do zbx_stats_add("st_ref2down", ref2sla.downtimeTime) %}
+            <td style="text-align: center">
+                {% if sla.sla >= service.goodsla %}
+                    <span class="sla-good">{{ "%0.2f"|format(sla.sla) }}%</span>
+                {% else %}
+                    <span class="sla-bad">{{ "%0.2f"|format(sla.sla) }}%</span>
+                {% endif %}
+                {% if show_trend == 1 %}
+                    {% if sla.sla > refsla.sla %}
+                        <span class="trend-good">(⇗)</span>
+                    {% elseif sla.sla < refsla.sla %}
+                        <span class="trend-bad">(⇘)</span>
+                    {% else %}
+                        <span class="trend-ok">(⇒)</span>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td style="text-align: center">{{ m.format_secs(sla.okTime) }}</td>
+            <td style="text-align: center">{{ m.format_secs(sla.problemTime) }}</td>
+            <td style="text-align: center">{{ m.format_secs(sla.downtimeTime) }}</td>
+            <td style="text-align: center">
+                {% spaceless %}
+                    {% set problems = 0 %}
+                    {% set refproblems = 0 %}
+                    {% set childrenids = zbx_service_get_deep([service.serviceid]) %}
+                    {% set children = zbx_api_service_get({output:'extend', serviceids:childrenids}) %}
+                    {% set triggerids = [] %}
+                    {% for child in children %} {# collect dependent trigger ids #}
+                        {% if child.triggerid is defined %}
+                            {% set triggerids = triggerids|merge([child.triggerid]) %}
+                        {% endif %}
+                    {% endfor %}
 
-            {% set ref2periods = zbx_period_get({"objectids":triggerids, time_from:REF2FROM|date("U"), time_till:REF2TO|date("U")}) %}
-            {% set ref2problems = zbx_period_query({periods:ref2periods, sortby:"secs", filterby:"state", filterval:1}) %}
-            {% set ref2problemcount = ref2problems | length %}
-            {% do zbx_stats_add("st_ref2problems", ref2problemcount) %}
+                    {% set periods = zbx_period_get({"objectids":triggerids, time_from:FROM|date("U"), time_till:TO|date("U")}) %}
+                    {% set problemstats = periods.stats[1]|default({count:0,max:0,average:0,values:[]}) %}
+                    {% do zbx_stats_add("st_problem_counts",problemstats.count) %}
+                    {% do zbx_stats_add("st_problem_values",problemstats.values) %}
 
-            {{ problemcount }} db ({{ m.format_secs(maxproblem.secs) }}/)
-			{% if show_trend == 1 %}
-				{% if problemcount > refproblemcount %}
-					<span class="trend-bad">(⇗)</span>
-				{% elseif problemcount < refproblemcount %}
-					<span class="trend-good">(⇘)</span>
-				{% else %}
-					<span class="trend-ok">(⇒)</span>
-				{% endif %}
-			{% endif %}
-            {% endspaceless %}
-			</td>
+                    {% set refperiods = zbx_period_get({"objectids":triggerids, time_from:REFFROM|date("U"), time_till:REFTO|date("U")}) %}
+                    {% set refproblemstats = refperiods.stats[1]|default({count:0,max:0,average:0,values:[]}) %}
+                    {% do zbx_stats_add("st_refproblem_counts",refproblemstats.count) %}
+                    {% do zbx_stats_add("st_refproblem_values",refproblemstats.values) %}
 
-	</tr>
-	{% endfor %} {# end iterate over all IT services #}
-	</tbody>
-	
-	<tfoot>
-		<tr>
-			<th>Átlag</th>
-			<th>
-                {% set avgsla = zbx_stats_average("st_sla") %}
-                {% set avgrefsla = zbx_stats_average("st_refsla") %}
-                {{ "%0.2f"|format(avgsla) }}%
-				{% if show_trend == 1 %}
-					{% if avgsla > avgrefsla %}
-						(⇗)
-					{% elseif avgsla < avgrefsla %}
-						(⇘)
-					{% else %}
-						(⇒)
-					{% endif %}
-				{% endif %}
-			</th>
-			<th>{{ m.format_secs(zbx_stats_average("st_ok")|round) }}</th>
-			<th>{{ m.format_secs(zbx_stats_average("st_problem")|round) }}</th>
-			<th>{{ m.format_secs(zbx_stats_average("st_down")|round) }}</th>
-			<th>
-                {% set avgproblems = zbx_stats_average("st_problems") %}
-                {% set refavgproblems = zbx_stats_average("st_refproblems") %}
-                {{ "%0.2f"|format(avgproblems) }} db
-				{% if show_trend == 1 %}
-					{% if avgproblems > refavgproblems %}
-						(⇗)
-					{% elseif avgproblems < refavgproblems %}
-						(⇘)
-					{% else %}
-						(⇒)
-					{% endif %}
-				{% endif %}
-			</th>
+                    {% set ref2periods = zbx_period_get({"objectids":triggerids, time_from:REF2FROM|date("U"), time_till:REF2TO|date("U")}) %}
+                    {% set ref2problemstats = ref2periods.stats[1]|default({count:0,max:0,average:0,values:[]}) %}
+                    {% do zbx_stats_add("st_ref2problem_counts",ref2problemstats.count) %}
+                    {% do zbx_stats_add("st_ref2problem_values",ref2problemstats.values) %}
+
+                    {{ problemstats.count|default(0) }} db ({{ m.format_secs(problemstats.max|round) }}/{{ m.format_secs(problemstats.average|round) }})
+                    {% if show_trend == 1 %}
+                        {% if problemstats.count > refproblemstats.count %}
+                            <span class="trend-bad">(⇗)</span>
+                        {% elseif problemstats.count < refproblemstats.count %}
+                            <span class="trend-good">(⇘)</span>
+                        {% else %}
+                            <span class="trend-ok">(⇒)</span>
+                        {% endif %}
+                    {% endif %}
+                {% endspaceless %}
+            </td>
+
         </tr>
-        {% if show_trend == 1 %}
-            <tr>
-                <th>Referencia</th>
-                <th>
-                    {% set avgrefsla = zbx_stats_average("st_refsla") %}
-                    {{ "%0.2f"|format(avgrefsla) }}%
-                </th>
-                <th>{{ m.format_secs(zbx_stats_average("st_refok")|round) }}</th>
-                <th>{{ m.format_secs(zbx_stats_average("st_refproblem")|round) }}</th>
-                <th>{{ m.format_secs(zbx_stats_average("st_refdown")|round) }}</th>
-                <th>
-                    {% set refavgproblems = zbx_stats_average("st_refproblems") %}
-                    {{ "%0.2f"|format(refavgproblems) }} db
-                </th>
-            </tr>
-        {% endif %}
-        {% if show_trend2 == 1 %}
-            <tr>
-                <th>Referencia2</th>
-                <th>
-                    {% set avgref2sla = zbx_stats_average("st_ref2sla") %}
-                    {{ "%0.2f"|format(avgref2sla) }}%
-                </th>
-                <th>{{ m.format_secs(zbx_stats_average("st_ref2ok")|round) }}</th>
-                <th>{{ m.format_secs(zbx_stats_average("st_ref2problem")|round) }}</th>
-                <th>{{ m.format_secs(zbx_stats_average("st_ref2down")|round) }}</th>
-                <th>
-                    {% set ref2avgproblems = zbx_stats_average("st_ref2problems") %}
-                    {{ "%0.2f"|format(ref2avgproblems) }} db
-                </th>
-            </tr>
-        {% endif %}
+    {% endfor %} {# end iterate over all IT services #}
+    </tbody>
+
+    <tfoot>
+    <tr>
+        <th>Átlag</th>
+        <th>
+            {% set avgsla = zbx_stats_average("st_sla") %}
+            {% set avgrefsla = zbx_stats_average("st_refsla") %}
+            {{ "%0.2f"|format(avgsla) }}%
+            {% if show_trend == 1 %}
+                {% if avgsla > avgrefsla %}
+                    (⇗)
+                {% elseif avgsla < avgrefsla %}
+                    (⇘)
+                {% else %}
+                    (⇒)
+                {% endif %}
+            {% endif %}
+        </th>
+        <th>{{ m.format_secs(zbx_stats_average("st_ok")|round) }}</th>
+        <th>{{ m.format_secs(zbx_stats_average("st_problem")|round) }}</th>
+        <th>{{ m.format_secs(zbx_stats_average("st_down")|round) }}</th>
+        <th>
+            {% set avgproblems = zbx_stats_average("st_problem_counts") %}
+            {% set maxproblemsec = zbx_stats_max("st_problem_values") %}
+            {% set avgproblemsec = zbx_stats_average("st_problem_values") %}
+            {% set refavgproblems = zbx_stats_average("st_refproblem_counts") %}
+            {{ "%0.2f"|format(avgproblems) }} db ({{ m.format_secs(maxproblemsec|round) }}/{{ m.format_secs(avgproblemsec|round) }})
+            {% if show_trend == 1 %}
+                {% if avgproblems > refavgproblems %}
+                    (⇗)
+                {% elseif avgproblems < refavgproblems %}
+                    (⇘)
+                {% else %}
+                    (⇒)
+                {% endif %}
+            {% endif %}
+        </th>
+    </tr>
+    {% if show_trend == 1 %}
+        <tr>
+            <th>Referencia</th>
+            <th>
+                {% set avgrefsla = zbx_stats_average("st_refsla") %}
+                {{ "%0.2f"|format(avgrefsla) }}%
+            </th>
+            <th>{{ m.format_secs(zbx_stats_average("st_refok")|round) }}</th>
+            <th>{{ m.format_secs(zbx_stats_average("st_refproblem")|round) }}</th>
+            <th>{{ m.format_secs(zbx_stats_average("st_refdown")|round) }}</th>
+            <th>
+                {% set refavgproblems = zbx_stats_average("st_refproblem_counts") %}
+                {{ "%0.2f"|format(refavgproblems) }} db
+            </th>
+        </tr>
+    {% endif %}
+    {% if show_trend2 == 1 %}
+        <tr>
+            <th>Referencia2</th>
+            <th>
+                {% set avgref2sla = zbx_stats_average("st_ref2sla") %}
+                {{ "%0.2f"|format(avgref2sla) }}%
+            </th>
+            <th>{{ m.format_secs(zbx_stats_average("st_ref2ok")|round) }}</th>
+            <th>{{ m.format_secs(zbx_stats_average("st_ref2problem")|round) }}</th>
+            <th>{{ m.format_secs(zbx_stats_average("st_ref2down")|round) }}</th>
+            <th>
+                {% set ref2avgproblems = zbx_stats_average("st_ref2problem_counts") %}
+                {{ "%0.2f"|format(ref2avgproblems) }} db
+            </th>
+        </tr>
+    {% endif %}
 
     </tfoot>
-	
+
 </table>
