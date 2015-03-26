@@ -34,6 +34,10 @@ class ZbxPeriodExtension extends ExtensionBase {
 
         $log->debug("start function zbx_period_get_stats", $data);
 
+        if(count($data)==0) {
+            return array('all'=>array('values'=>0,'count'=>0,'max'=>0,'min'=>0,'average'=>0));
+        }
+
         $stats=array();
 
         $s = new \PHPStats\Stats();

@@ -14,7 +14,7 @@
         <th>Rendben</th>
         <th>Probléma</th>
         <th>Karbantartás</th>
-        <th>Kiesés (max/avg)</th>
+        <th>Kiesés (max/átl)</th>
     </tr>
     </thead>
 
@@ -128,8 +128,8 @@
         <th>{{ m.format_secs(zbx_stats_average("st_down")|round) }}</th>
         <th>
             {% set avgproblems = zbx_stats_average("st_problem_counts") %}
-            {% set maxproblemsec = zbx_stats_max("st_problem_values") %}
             {% set avgproblemsec = zbx_stats_average("st_problem_values") %}
+            {% set maxproblemsec = zbx_stats_max("st_problem_values") %}
             {% set refavgproblems = zbx_stats_average("st_refproblem_counts") %}
             {{ "%0.2f"|format(avgproblems) }} db ({{ m.format_secs(maxproblemsec|round) }}/{{ m.format_secs(avgproblemsec|round) }})
             {% if show_trend == 1 %}
@@ -155,7 +155,9 @@
             <th>{{ m.format_secs(zbx_stats_average("st_refdown")|round) }}</th>
             <th>
                 {% set refavgproblems = zbx_stats_average("st_refproblem_counts") %}
-                {{ "%0.2f"|format(refavgproblems) }} db
+                {% set maxrefproblemsec = zbx_stats_max("st_refproblem_values") %}
+                {% set avgrefproblemsec = zbx_stats_average("st_refproblem_values") %}
+                {{ "%0.2f"|format(refavgproblems) }} db ({{ m.format_secs(maxrefproblemsec|round) }}/{{ m.format_secs(avgrefproblemsec|round) }})
             </th>
         </tr>
     {% endif %}
@@ -171,7 +173,9 @@
             <th>{{ m.format_secs(zbx_stats_average("st_ref2down")|round) }}</th>
             <th>
                 {% set ref2avgproblems = zbx_stats_average("st_ref2problem_counts") %}
-                {{ "%0.2f"|format(ref2avgproblems) }} db
+                {% set maxref2problemsec = zbx_stats_max("st_ref2problem_values") %}
+                {% set avgref2problemsec = zbx_stats_average("st_ref2problem_values") %}
+                {{ "%0.2f"|format(ref2avgproblems) }} db ({{ m.format_secs(maxref2problemsec|round) }}/{{ m.format_secs(avgref2problemsec|round) }})
             </th>
         </tr>
     {% endif %}

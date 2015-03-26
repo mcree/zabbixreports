@@ -69,7 +69,11 @@ class ZbxStatsExtension extends ExtensionBase {
 
             $stats = new \PHPStats\Stats();
 
-            $res = $stats->average($data[$args]);
+            if(count($data[$args])>0) {
+                $res = $stats->average($data[$args]);
+            } else {
+                $res=0;
+            }
 
             $log->debug("end function zbx_stats_average", array(
                 $res
