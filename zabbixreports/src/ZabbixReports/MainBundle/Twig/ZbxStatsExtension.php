@@ -78,7 +78,7 @@ class ZbxStatsExtension extends ExtensionBase {
             return $res;
         };
 
-        $f4 = function ($args) use ($log,$data) {
+        $f4 = function ($args) use ($log,&$data) {
 
             $log->debug("start function zbx_stats_gaverage", array($args));
 
@@ -93,7 +93,7 @@ class ZbxStatsExtension extends ExtensionBase {
             return $res;
         };
 
-        $f5 = function ($args) use ($log,$data) {
+        $f5 = function ($args) use ($log,&$data) {
 
             $log->debug("start function zbx_stats_sum", array($args));
 
@@ -108,13 +108,17 @@ class ZbxStatsExtension extends ExtensionBase {
             return $res;
         };
 
-        $f6 = function ($args) use ($log,$data) {
+        $f6 = function ($args) use ($log,&$data) {
 
             $log->debug("start function zbx_stats_max", array($args));
 
-            if(count($data)>0) {
-                asort($data);
-                $res = $data[count($data) - 1];
+            $a = $data[$args];
+
+
+            if(count($a)>0) {
+                rsort($a);
+                $res = $a[0];
+                //$log->debug("data function zbx_stats_max", $a);
             } else {
                 $res = 0;
             }
